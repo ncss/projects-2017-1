@@ -27,6 +27,14 @@ class User:
         return User(row[0]
 
     @staticmethod
-    def create(username):
+    def create(username, password):
         cur = conn.execute('''
-            INSERT INTO
+            INSERT INTO User
+            VALUES (?, ?)''', (username, password))
+        return User(username, password)
+
+    @staticmethod
+    def delete(username):
+        cur = conn.execute('''
+            DELETE FROM User
+            WHERE username = ?''', (username,))
