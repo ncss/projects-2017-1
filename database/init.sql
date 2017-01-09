@@ -2,18 +2,20 @@ CREATE TABLE list (
 	id INTEGER NOT NULL,
 	userid INTEGER NOT NULL,
 	title TEXT NOT NULL,
-	PRIMRARY KEY (id)
+	PRIMARY KEY (id),
+	FOREIGN KEY (userid) REFERENCES user(id),
 );
 
 CREATE TABLE listitem (
 	id INTEGER NOT NULL,
 	listid INTEGER NOT NULL,
 	text TEXT NOT NULL,
-	completed  INTEGER NOT NULL
-	PRIMRARY KEY (id)
+	completed  INTEGER NOT NULL,
+	PRIMARY KEY (id),
+	FOREIGN KEY (lsitid) REFERENCES list(id)
 );
 
-CREATE TABLE User (
+CREATE TABLE user (
 	id INTEGER NOT NULL,
 	username INTEGER NOT NULL,
 	password INTEGER NOT NULL,
