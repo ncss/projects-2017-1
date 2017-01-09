@@ -1,0 +1,21 @@
+CREATE TABLE list (
+	id INTEGER NOT NULL,
+	userid INTEGER NOT NULL,
+	title TEXT NOT NULL,
+	PRIMRARY KEY (id)
+);
+
+CREATE TABLE listitem (
+	id INTEGER NOT NULL,
+	listid INTEGER NOT NULL,
+	text TEXT NOT NULL,
+	completed  INTEGER NOT NULL
+	PRIMRARY KEY (id)
+);
+
+CREATE TABLE User (
+	id INTEGER NOT NULL,
+	username INTEGER NOT NULL,
+	password INTEGER NOT NULL,
+	PRIMARY KEY (id)
+);

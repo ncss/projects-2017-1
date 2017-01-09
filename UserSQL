@@ -1,6 +1,0 @@
-CREATE TABLE User (
-	id INTEGER NOT NULL,
-	username INTEGER NOT NULL,
-	password INTEGER NOT NULL,
-	PRIMARY KEY (id)
-);
