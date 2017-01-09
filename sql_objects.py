@@ -4,8 +4,8 @@ conn = sqlite3.connect('database.db')
 cur = conn.cursor()
 
 def auth_required(fn):
-    def inner():
-        return rn()
+    def inner(user, *args):
+        return fn()
     return inner
 
 
@@ -30,7 +30,7 @@ class Bucket:
 
     @staticmethod
     def get(bucket):
-        cur.execute()##Inser SQL Here
+        cur.execute()##Insert SQL Here
         cer.fetchone()
         for row in cur:
             title, *args = row
@@ -73,7 +73,11 @@ class User:
         Adds a user to the database, gets passed a User object,
         returns None if user already exists.
         '''
-        cur.execute('INSERT INTO people VALUES (COUNT(id), ?, ?)', (user.name, user.passwd))
+        cur.execute("SELECT * FROM User WHERE username = ?", (user.name,))
+        for row in cur:
+            return None
+        cur.execute('INSERT INTO User VALUES (NULL, ?, ?)', (user.name, user.passwd))
+        conn.commit()
 
     @staticmethod
     @auth_required
@@ -91,23 +95,37 @@ class User:
         Edit the details of a user as passed in a dictionary
         '''
         pass
-        
+
     @staticmethod
     def get(username):
         '''
         Get a User object with the details of the found user,
         returns None if no user found
         '''
-        cur.execute('''SELECT u''', (username,))##Insert SQL Here
+        cur.execute('''SELECT u.username, u.password
+                        FROM User u
+                        WHERE u.username = ?;''', (username,))##Insert SQL Here
         cur.fetchone()
         for row in cur:
+            print(row)
             return User(row)
+        print("Error! User not found!")
         return None
 
+#Setup the users table
+#print(' '.join(open("UserSQL").read().split("\n")))
+#cur.executescript(open("UserSQL").read())
+
 g = Goal(('Complete the website to MVP standards. ', 0))
-g1 = Goal(('Complete the website to MVP1 standards. ', 0))
-g2 = Goal(('Complete the website to MVP2 standards. ', 0))
+g1 = Goal(('Complete the website to MVP+1 standards. ', 0))
+g2 = Goal(('Complete the website to MVP+2 standards. ', 0))
 bucket = Bucket("Website Goals", g, g1, g2)
 for a in bucket:
     print(a)
+user = User(('mitchell', 'hello'))
+print(User.add_user(user))
 user = User.get('mitchell')
+print(user)
+cur.execute("SELECT * from User")
+for row in cur:
+    print(row)
