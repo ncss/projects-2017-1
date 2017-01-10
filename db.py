@@ -67,8 +67,8 @@ class List:
 
         SELECT title, userid, id
         FROM lists
-        WHERE ? = ?
-        ''',(search_key, search_value))
+        WHERE {} = ?
+        '''.format(search_key), (search_value,))
 
         rows = cur.fetchall()
 
@@ -149,8 +149,26 @@ class Item:
             return Item(list_id, completed, text, image, item_id)
         return None
 
-    def search(self):
-        pass
+    def search(self, id=None, list_id=None, text=None, rank=None, completed=None, image=None):
+
+        search_key = ''
+        search_value = ''
+
+        for key, value in **kwargs.items():
+            if value is not None:
+                search_key = key
+                search_value = value
+
+        cur.execute('''
+
+        SELECT id, list_id, text, rank, completed, image
+        FROM items
+        WHERE {} = ?
+        '''.format(search_key), (search_value,))
+
+        rows = cur.fetchall()
+
+        return [List(*row) for row in rows]
 
     def update(self):
         '''
