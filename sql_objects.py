@@ -38,6 +38,7 @@ class List:
                     WHERE id = ?;
                     ''', (self.id,)
                    )
+        conn.commit()
 
     def search(self):
         pass
@@ -79,35 +80,39 @@ class Item:
 
 class User:
     def __init__(self, args):
-        self.name, self.passwd = args
-        self.bucket = None
+        self.name, self.passwd, self.id = args
+        #self.bucket = None
 
     def __str__(self):
         return "User(username={}, passwdHash={})".format(self.name, self.passwd)
 
-    def link_bucket(self, bucket):
+    #def link_bucket(self, bucket):
         '''
         Links the bucket to the User instance.
         '''
-        self.bucket = bucket
+        #self.bucket = bucket
 
     def add(self):
         '''
         Adds a user to the database,
         returns None if user already exists.
         '''
-        cur.execute("SELECT * FROM users WHERE username = ?;", (self.name,))
-        for row in cur:
-            raise UserExistsError("User {} already Exists!!!".format(self.name))
-        cur.execute('INSERT INTO users VALUES (NULL, ?, ?);', (self.name, self.passwd))
+        #cur.execute("SELECT * FROM users WHERE username = ?;", (self.name,))
+        #for row in cur:
+        #    raise UserExistsError("User {} already Exists!!!".format(self.name))
+        cur.execute('INSERT INTO users (username, password) VALUES (?, ?);', (self.name, self.passwd))
         conn.commit()
 
     def update(self):
-        ##TODO fix this SQL
+        '''
+            Does this update the user's password?
+        '''
         cur.execute('''
                     UPDATE users
-                    SET
-                    ''')
+                    SET password = ?
+                    WHERE id = ?
+                    ''', (self.password, self.id))
+        conn.commit()
 
     def search(self):
         ##TODO fill this out
@@ -130,16 +135,15 @@ class User:
         Get a User object with the details of the found user,
         returns None if no user found
         '''
-        cur.execute('''SELECT u.username, u.password
+        cur.execute('''SELECT username, password, id
                         FROM users u
                         WHERE u.username = ?;''', (username,))
-        cur.fetchone()
-        for row in cur:
-            return User(row)
-        print("Error! User not found!")
-        return None
+        row = cur.fetchone()
+
+        return User(*row)
 
 #Setup the users table
+#Insert sql here?
 
 
 g = Item(('Complete the website to MVP standards. ', 0))
