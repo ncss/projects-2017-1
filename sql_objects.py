@@ -1,56 +1,61 @@
 import sqlite3
 from api_errors import *
-from classes import *
 
 conn = sqlite3.connect('database.db')
+conn.execute("PRAGMA foreign_keys = ON")
+conn.row_factory = sqlite3.Row
 cur = conn.cursor()
 
 class List:
-    def __init__(self, title, *args):
+    def __init__(self, title, uid, id):
         self.title = title
-        self.items = [a for a in args]
-        self.i = -1
+        self.uid = uid
+        self.id = id
 
-    def __iter__(self):
-        return iter(self.items)
-
-    def add(self, user):
+    def add(self):
         '''
         Add a bucket list to the given user,
         Throws an error if user doesn't exist
         or bucket object invalid
         '''
-        pass
+        cur.execute('INSERT INTO lists (uid, title) VALUES (?, ?);', (self.uid, self.title))
+        conn.commit()
 
-    def update(self, user, **kwargs):
+    def update(self):
         '''
-        Edit the bucket of a given user,
-        changes are passed in through a
-        dictionary.
-        //TODO fix how data is passed in
+        Edit the bucket list of a given user.
         '''
-        pass
+        cur.execute('''
+                    UPDATE lists
+                    SET title = ?, userid = ?
+                    WHERE id = self.id;
+                    ''', (self.title, self.uid))
+        conn.commit()
 
     def delete(self):
         cur.execute('''
-
-                    ''')
-        pass
+                    DELETE FROM lists
+                    WHERE id = ?;
+                    ''', (self.id,)
+                   )
 
     def search(self):
         pass
 
     @staticmethod
-    def get(user):
+    def get(list_id):
         '''
         Get the bucket data of a given user
         '''
-        cur.execute()##Insert SQL Here
-        cer.fetchone()
-        for row in cur:
-            title, *args = row
-            return List(title, args)
-        raise BucketNotFoundError("Bucket List of {} not found".format(user.name))
+        cur.execute('''
+                    SELECT title, userid, id
+                    FROM lists
+                    WHERE id = ?;
+                    ''', (list_id,))
+        row = cur.fetchone()
+        #title, uid, id = row
+        return List(*row)
+        #raise BucketNotFoundError("Bucket List of {} not found".format(user.name))
 
 
 class Item:
@@ -91,10 +96,10 @@ class User:
         Adds a user to the database,
         returns None if user already exists.
         '''
-        cur.execute("SELECT * FROM users WHERE username = ?", (self.name,))
+        cur.execute("SELECT * FROM users WHERE username = ?;", (self.name,))
         for row in cur:
             raise UserExistsError("User {} already Exists!!!".format(self.name))
-        cur.execute('INSERT INTO users VALUES (NULL, ?, ?)', (self.name, self.passwd))
+        cur.execute('INSERT INTO users VALUES (NULL, ?, ?);', (self.name, self.passwd))
         conn.commit()
 
     def update(self):
@@ -115,7 +120,7 @@ class User:
         '''
         cur.execute('''
                     DELETE FROM users
-                    WHERE username = ?
+                    WHERE username = ?;
                     ''', (self.name,))
         conn.commit()
 
