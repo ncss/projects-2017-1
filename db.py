@@ -106,6 +106,15 @@ class List:
             lists.append(List(title, uid, id, created))
         return lists
 
+   def get_items(self):
+       cur.execute('''SELECT listid, completed, text, image, id
+                      FROM items
+                      WHERE listid=?;''' (self.id,)
+     items = []
+     for row in cur:
+         listid, completed, text, image, id = row
+         items.append(Item(listid, completed, text, image, id))
+     return items
 
 class Item:
     def __init__(self, list_id, completed=False, text=None, image=None, id=None):
@@ -286,6 +295,9 @@ class User:
             name, password, id = row
             return User(name, password, id)
         return None
+
+
+
 
 if __name__ == "__main__":
     u2 = User('test1', 'testp')
