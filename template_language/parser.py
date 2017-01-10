@@ -7,13 +7,14 @@ TERMINALS = re.compile('\{\{|\}\}|\{\%|\%\}')
 #oops, changed constant
 #TOKENS = [re.compile() for token in TOKENS] #list comprehension
 
-def render_template(template):#TODO add
+def render_template(template, context):#TODO add
     #TODO template is only a string
+    f = open(template).read()
     tokeniser = Tokeniser()
-    tokens = tokeniser.tokenise(template)
+    tokens = tokeniser.tokenise(f)
 
     parser = Parser(tokens)
-    parser.parse()
+    return parser.parse(context)
 
 
 class Tokeniser:
@@ -49,9 +50,9 @@ class Parser:
         self._upto += 1
         return self.peek()
 
-    def parse(self):
+    def parse(self, context):
         root = self._parse_group()
-        return root.render()
+        return root.render(context)
 
     def _parse_group(self): #doesn't eat any tokens directly
         node = GroupNode(None) #TODO needs parent
@@ -100,17 +101,16 @@ class GroupNode(Node):
         super(GroupNode, self).__init__(parent)
         self.children = []
 
-    def render(self):
-        for child in self.children:
-            child.render()
+    def render(self, context):
+        return ''.join([child.render(context) for child in self.children])
 
 class TextNode(Node): #taking in html text --> do nothing
     def __init__(self, parent, text):
         super(TextNode, self).__init__(parent)
         self.text = text
 
-    def render(self):
-        print(self.text)
+    def render(self, context):
+        return self.text
 
 
 class ExpressionNode(Node): #after {{ --> treat as Python expression
@@ -118,5 +118,5 @@ class ExpressionNode(Node): #after {{ --> treat as Python expression
         super(ExpressionNode, self).__init__(parent)
         self.expression = expression
 
-    def render(self):
-        print(eval (self.expression))
+    def render(self, context):
+        return str(eval (self.expression, {}, context))
