@@ -1,11 +1,11 @@
-import sqlite3, datetime
+import sqlite3
+import datetime
 
 class UserExistsError(Exception):
     pass
 
 class BucketNotFoundError(Exception):
     pass
-
 
 conn = sqlite3.connect('database.db')
 conn.execute("PRAGMA foreign_keys = ON")
@@ -152,6 +152,7 @@ class Item:
                     DELETE FROM items WHERE id = ?
                     ''', (self.id,))
         conn.commit()
+
 
 class User:
     def __init__(self, name, passwd, id=None):

@@ -1,6 +1,8 @@
-import sqlite3, datetime
-with open('database.db', 'w')as f:
-    pass
+import sqlite3
+import datetime
+
+open('database.db', 'w').close()
+
 conn = sqlite3.connect('database.db')
 cur = conn.cursor()
 
