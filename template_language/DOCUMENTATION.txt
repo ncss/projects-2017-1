@@ -1,0 +1,32 @@
+====================HTML/DESIGN TEAM=====================================
+
+LOCATION OF TEMPLATES
+Please place all required templates in:
+  \projects-2017-1\templates
+This will allow the module to access the appropriate files to display.
+
+HOW TO CREATE TEMPLATE
+Write html as normal.
+You can use the features below to make it dynamic.
+
+HOW TO EMBED OTHER TEMPLATES
+{% include filename %}
+e.g.  {% include header.html %}
+
+HOW TO HAVE PYTHON IN TEMPLATES
+How to have Python expressions in template
+{{expression}}
+e.g.  {{ username }}
+e.g.  {{ username.upper() }}
+e.g.  {{ 1 + 1 }}
+
+There will be more features in the PRO version (if-statements, for-loops) :)
+
+=====================TORNADO TEAM=======================================
+
+HOW TO IMPORT MODULE
+from template_language.parser import render_template
+
+HOW TO USE MODULE
+render_template('filename', {context})
+e.g.  render_template('test.html', {'username' : 'JaneSmith', 'password' : 'plaintextpasswordyay'})

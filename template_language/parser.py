@@ -9,16 +9,14 @@ TERMINALS = re.compile('\{\{|\}\}|\{\%|\%\}')
 TEMPLATES_PATH = 'templates'
 
 def render_template(template, context):#TODO add
-    #TODO close file
-    f = open(TEMPLATES_PATH + '/' + template).read() #TODO fix paths
-    tokeniser = Tokeniser()
-    tokens = tokeniser.tokenise(f)
-
-    parser = Parser(tokens)
+    parser = Parser(Tokeniser.tokenise(template))
     return parser.parse(context)
 
 class Tokeniser:
-    def tokenise(self, text):
+    @staticmethod
+    def tokenise(filename):
+        with open(TEMPLATES_PATH + '/' + filename) as f: #TODO fix path
+            text = f.read()
         tokens = []
         while text:
             match = TERMINALS.search(text) #TOKENS compiled above
@@ -97,10 +95,7 @@ class Parser:
         match = re.match(r'^\s*include\s+(\S+)\s*$', tag)
         if match:
             path = match.group(1)
-            #TODO close file
-            f = open(TEMPLATES_PATH + '/' + path).read() #TODO fix path
-            t = Tokeniser()
-            p = Parser(t.tokenise(f))
+            p = Parser(Tokeniser.tokenise(path))
             assert self.next() == '%}', 'Close expected %}'
             self.next()
             return p._parse_group()
