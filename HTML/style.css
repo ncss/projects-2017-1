@@ -1,0 +1,84 @@
+html,body {
+  margin: 0px;
+}
+
+header h1 {
+  font-family: Comfortaa;
+  font-size: 30px;
+  line-height: 33px;
+  margin-left: 60px;
+  margin-top: 0px;
+  display: inline-block;
+  border-bottom: 2px solid;
+}
+
+header {
+  background-color: rgba(170, 170, 170, 0.27);
+  position: fixed;
+  width: 100%;
+  margin-top: -20px;
+
+}
+
+nav {
+  display: inline-block;
+  float: right;
+  margin-right: 60px;
+}
+nav a {
+  font: 20px Comfortaa;
+  margin-right: 40px;
+  margin-top: 30px;
+  display: inline-block;
+  color: black;
+  text-decoration: none;
+
+}
+
+button {
+  font-family: Comfortaa, 'sans-serif';
+  font-size: 20px;
+  line-height: 31px;
+  list-style-type: none;
+  text-align: right;
+  margin-top: 20px;
+  border-radius: 30px;
+  background-color: white;
+  border-color: black; /*change to color on decision*/
+  padding: 2px 10px;
+
+}
+
+button:hover {
+  background-color: lightgrey; /*change to color of border*/
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: Comfortaa;
+
+}
+h1 {
+  border-bottom: 2px solid;
+}
+
+p {
+  font: 15px/24px Comfortaa;
+
+}
+figcaption {
+  font-family: Comfortaa;
+}
+footer {
+  font-family: Comfortaa;
+}
+fieldset {
+  font: 20px Comfortaa;
+
+}
+
+img {
+  max-height: 100px;
+  max-width: 200px;
+
+}
