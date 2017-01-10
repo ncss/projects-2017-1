@@ -40,8 +40,21 @@ class List:
                    )
         conn.commit()
 
-    def search(self):
-        pass
+    @staticmethod
+    def search(id, user_id, title):
+
+        cur.execute('''
+
+        SELECT title, userid, id
+        FROM lists
+        WHERE id = ?,
+        AND user_id = ?,
+        AND title = ?
+        ''',(self.id, self.user_id, self.title))
+
+        #do something
+
+        return
 
     @staticmethod
     def get(list_id):
@@ -67,6 +80,8 @@ class Item:
         for a in vals:
             if isinstance(a, int):
                 self.completed = bool(a)
+
+                #why 'static/'?
             elif a.startswith('static/'):
                 self.image = a.strip()
             else:
@@ -116,6 +131,9 @@ class User:
 
     def search(self):
         ##TODO fill this out
+
+
+
         pass
 
     def delete(self):
