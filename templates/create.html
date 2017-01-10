@@ -3,17 +3,15 @@
 {% include header.html %}
 
 <body>
-  <form>
+  <form action="/list/create" method="post">
     <button class="upload">
       Upload
     </button>
     <br>
     <input type="textarea" name="description" value="Description">
+    <button type="submit" class="save">
+      Save
+    </button>
   </form>
 </body>
-<footer>
-  <button class="save">
-    Save
-  </button>
-</footer>
 </html>

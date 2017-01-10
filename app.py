@@ -7,7 +7,7 @@ def index_handler(request):
     if cookie == None:
         request.write('Welcome to our site!')
     else:
-        request.write('This is the news feed!')
+        request.write(render_template('news-feed.html', {'title' : 'News Feed'}))
 
 def login(request):
     method = request.request.method
@@ -25,15 +25,15 @@ def login(request):
 def create(request):
     method = request.request.method
     if method == 'GET':
-        request.write(render_template('not_instagram.html', {'location' : '/list/create'}))
+        request.write(render_template('create.html', {'title' : 'Create A List'}))
         # with open("not_instagram.html") as f:
         #     request.write(f.read())
         #     return
     elif method == 'POST':
-        username = request.get_field('username')
-        title = request.get_field('password')
-        user = User.get(username)
+        user = User.get_by_id(request.get_secure_cookie('user_id'))
+        title = request.get_field('description')
         if user is not None:
+            print("HERE")
             l = List(title, user.id)
             l.add()
             print("creating list : {}".format(l))
@@ -42,7 +42,8 @@ def create(request):
 def list_handler(request, list_id):
     method = request.request.method
     if method == 'GET':
-        request.write(str(List.get(int(list_id))))
+        user = User.get_by_id(List.get(int(list_id)).uid)
+        request.write(render_template('usernames_bucket_list(templated).html', {'title': 'Bucket List', 'username' : user.name}))
         # request.write(render_template('not_instagram.html', {'location' : '/list/{}/'.format(list_id)}))
     elif method == 'POST':
         # submit checkboxes to database
@@ -51,19 +52,20 @@ def list_handler(request, list_id):
 def signup_handler(request):
     method = request.request.method
     if method == 'GET':
-        request.write(render_template('not_instagram.html', {'location' : '/user/create'}))
+        request.write(render_template('signup(templated).html', {'title' : 'Sign Up'}))
     elif method == 'POST':
         print("running post")
         username = request.get_field('username')
         password = request.get_field('password')
         repeat_password = request.get_field('repeat_password')
-        user = User.get(username)
-        if user is not None:
-            raise Exception("User already exists cant add account.")
-        user = User(username, password)
-        print("creating user : {}".format(user))
-        user.add()
-        request.set_secure_cookie('user_id', str(user.id))
+        if password == repeat_password:
+            user = User.get(username)
+            if user is not None:
+                raise Exception("User already exists cant add account.")
+            user = User(username, password)
+            print("creating user : {}".format(user))
+            user.add()
+            request.set_secure_cookie('user_id', str(user.id))
         request.redirect(r'/')
 
 def logout(request):
