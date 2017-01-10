@@ -17,6 +17,20 @@ header {
   position: fixed;
   width: 100%;
   margin-top: -20px;
+}
+
+main {
+  padding-top: 10%;
+  width: 40%;
+  margin: auto;
+  text-align: center;
+}
+
+textarea {
+  display: block;
+  width: 100%;
+  min-height: 200px;
+  font-family: Comfortaa;
 
 }
 
@@ -42,6 +56,7 @@ button {
   list-style-type: none;
   text-align: right;
   margin-top: 20px;
+  margin-bottom: 20px;
   border-radius: 30px;
   background-color: white;
   border-color: black; /*change to color on decision*/
