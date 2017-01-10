@@ -9,7 +9,7 @@ def index_handler(request):
     else:
         request.write(render_template('news-feed.html', {'title' : 'News Feed'}))
 
-def login(request):
+def login_handler(request):
     method = request.request.method
     if method == 'GET':
         request.write(render_template('not_instagram.html', {'location' : '/login'}))
@@ -22,7 +22,7 @@ def login(request):
             request.set_secure_cookie('user_id', str(user.id))
         request.redirect(r'/')
 
-def create(request):
+def list_creation_handler(request):
     method = request.request.method
     if method == 'GET':
         request.write(render_template('create.html', {'title' : 'Create A List'}))
@@ -39,7 +39,7 @@ def create(request):
             print("creating list : {}".format(l))
             request.redirect('/list/{}/'.format(l.id))
 
-def list_handler(request, list_id):
+def list_display_handler(request, list_id):
     method = request.request.method
     if method == 'GET':
         user = User.get_by_id(List.get(int(list_id)).uid)
@@ -68,7 +68,7 @@ def signup_handler(request):
             request.set_secure_cookie('user_id', str(user.id))
         request.redirect(r'/')
 
-def logout(request):
+def logout_handler(request):
     request.clear_cookie('user_id')
     request.redirect(r'/')
 
@@ -79,10 +79,10 @@ def logout(request):
 
 server = Server()
 server.register(r'/', index_handler)
-server.register(r'/login', login)
-server.register(r'/list/create', create)
-server.register(r'/list/(\d+)/', list_handler)
-server.register(r'/logout', logout)
+server.register(r'/login', login_handler)
+server.register(r'/list/create', list_creation_handler)
+server.register(r'/list/(\d+)/', list_display_handler)
+server.register(r'/logout', logout_handler)
 server.register(r'/user/create', signup_handler)
 
 server.run()
