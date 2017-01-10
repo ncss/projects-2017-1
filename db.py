@@ -1,5 +1,11 @@
 import sqlite3, datetime
-from api_errors import *
+
+class UserExistsError(Exception):
+    pass
+
+class BucketNotFoundError(Exception):
+    pass
+
 
 conn = sqlite3.connect('database.db')
 conn.execute("PRAGMA foreign_keys = ON")
