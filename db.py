@@ -204,9 +204,26 @@ class User:
                     ''', (self.password, self.id))
         conn.commit()
 
-    def search(self):
-        ##TODO fill this out
-        pass
+    def search(self, username=None, id=None):
+
+        search_key = ''
+        search_value = ''
+        # Does kwargs need to be defined?
+        for key,value in **kwargs.items():
+            if value is not None:
+                search_key = key
+                search_value = value
+
+        cur.execute('''
+
+        SELECT from username, password, id
+        FROM users
+        WHERE {} = ?
+        '''.format(search_key), (search_value,))
+
+        rows = cur.fetchall()
+
+        return [List(*row) for row in rows]
 
     def delete(self):
         '''
