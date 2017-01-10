@@ -1,4 +1,6 @@
 from tornado.ncss import Server
+from db import *
+from template_language.parser import render_template
 
 def index_handler(request):
     cookie = request.get_secure_cookie('user_id')
@@ -10,60 +12,63 @@ def index_handler(request):
 def login(request):
     method = request.request.method
     if method == 'GET':
-        with open("not_instagram.html") as f:
-            request.write(f.read())
-            return
+        request.write(render_template('not_instagram.html', {'location' : '/login'}))
     elif method == 'POST':
         username = request.get_field('username')
         password = request.get_field('password')
-        #user = db.get(username)
-        #if user is not None
-        if username == 'meme' and password == '123': #user.password:
-            request.set_secure_cookie('user_id', '1') #user.id)
+        user = User.get(username)
+        print("Loggin in: {}".format(user))
+        if user is not None and password == user.password:
+            request.set_secure_cookie('user_id', str(user.id))
         request.redirect(r'/')
 
 def create(request):
     method = request.request.method
     if method == 'GET':
-        with open("not_instagram.html") as f:
-            request.write(f.read())
-            return
+        request.write(render_template('not_instagram.html', {'location' : '/list/create'}))
+        # with open("not_instagram.html") as f:
+        #     request.write(f.read())
+        #     return
     elif method == 'POST':
-        # To Do: When we know what the html form data will be, extract in here.
-        pass
+        username = request.get_field('username')
+        title = request.get_field('password')
+        user = User.get(username)
+        if user is not None:
+            l = List(title, user.id)
+            l.add()
+            print("creating list : {}".format(l))
+            request.redirect('/list/{}/'.format(l.id))
 
 def list_handler(request, list_id):
     method = request.request.method
     if method == 'GET':
-        with open("not_instagram.html") as f:
-            request.write(f.read())
-            return
+        request.write(str(List.get(int(list_id))))
+        # request.write(render_template('not_instagram.html', {'location' : '/list/{}/'.format(list_id)}))
     elif method == 'POST':
         # submit checkboxes to database
         pass
 
-def logout(request):
-    request.clear_cookie('user_id')
-    request.redirect(r'/')
-
 def signup_handler(request):
     method = request.request.method
     if method == 'GET':
-        with open("not_instagram.html") as f:
-            request.write(f.read())
-            return
+        request.write(render_template('not_instagram.html', {'location' : '/user/create'}))
     elif method == 'POST':
+        print("running post")
         username = request.get_field('username')
         password = request.get_field('password')
         repeat_password = request.get_field('repeat_password')
-        #To do, here is where we put the database
-        #user = db.get(username)
-        #if user is not None
-        #user.password:
-        user_id = '1'
-        request.set_secure_cookie('user_id', user_id) #user.id)
+        user = User.get(username)
+        if user is not None:
+            raise Exception("User already exists cant add account.")
+        user = User(username, password)
+        print("creating user : {}".format(user))
+        user.add()
+        request.set_secure_cookie('user_id', str(user.id))
         request.redirect(r'/')
 
+def logout(request):
+    request.clear_cookie('user_id')
+    request.redirect(r'/')
 
 # GET /list/create - Call create screen
 # POST /list/create - Post list to server and redirects to created list.
