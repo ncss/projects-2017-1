@@ -6,16 +6,16 @@ import re
 TERMINALS = re.compile('\{\{|\}\}|\{\%|\%\}')
 #oops, changed constant
 #TOKENS = [re.compile() for token in TOKENS] #list comprehension
+TEMPLATES_PATH = 'templates'
 
 def render_template(template, context):#TODO add
-    #TODO template is only a string
-    f = open(template).read()
+    #TODO close file
+    f = open(TEMPLATES_PATH + '/' + template).read() #TODO fix paths
     tokeniser = Tokeniser()
     tokens = tokeniser.tokenise(f)
 
     parser = Parser(tokens)
     return parser.parse(context)
-
 
 class Tokeniser:
     def tokenise(self, text):
@@ -97,7 +97,8 @@ class Parser:
         match = re.match(r'^\s*include\s+(\S+)\s*$', tag)
         if match:
             path = match.group(1)
-            f = open(path).read()
+            #TODO close file
+            f = open(TEMPLATES_PATH + '/' + path).read() #TODO fix path
             t = Tokeniser()
             p = Parser(t.tokenise(f))
             assert self.next() == '%}', 'Close expected %}'
