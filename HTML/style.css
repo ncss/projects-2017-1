@@ -1,3 +1,7 @@
+html,body {
+  margin: 0px;
+}
+
 header h1 {
   font-family: Comfortaa;
   font-size: 30px;
@@ -10,7 +14,9 @@ header h1 {
 
 header {
   background-color: rgba(170, 170, 170, 0.27);
-  margin: -8px;
+  position: fixed;
+  width: 100%;
+  margin-top: -20px;
 
 }
 
@@ -68,5 +74,11 @@ footer {
 }
 fieldset {
   font: 20px Comfortaa;
+
+}
+
+img {
+  max-height: 100px;
+  max-width: 200px;
 
 }
