@@ -92,6 +92,19 @@ class Parser:
         node = ExpressionNode(None, expr) #TODO needs parent
         return node
 
+    def _parse_tag(self):
+        tag = self.next()
+        match = re.match(r'^\s*include\s+(\S+)\s*$', tag)
+        if match:
+            path = match.group(1)
+            f = open(path).read()
+            t = Tokeniser()
+            p = Parser(t.tokenise(f))
+            assert self.next() == '%}', 'Close expected %}'
+            self.next()
+            return p._parse_group()
+        assert False, 'Tag not recognised'
+
 class Node:
     def __init__(self, parent): #need better variable names
         self.parent = parent
