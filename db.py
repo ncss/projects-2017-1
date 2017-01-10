@@ -272,6 +272,21 @@ class User:
             return User(name, password, id)
         return None
 
+    @staticmethod
+    def get_by_id(id):
+        '''
+        Get a User object with the details of the found user,
+        returns None if no user found
+        '''
+        cur.execute('''SELECT username, password, id
+                        FROM users u
+                        WHERE u.id = ?;''', (id,))
+        row = cur.fetchone()
+        if row is not None:
+            name, password, id = row
+            return User(name, password, id)
+        return None
+
 if __name__ == "__main__":
     u2 = User('test1', 'testp')
     u2.add()
