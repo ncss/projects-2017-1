@@ -126,7 +126,7 @@ class Item:
 class User:
     def __init__(self, name, passwd):
         self.name, self.password = (name, passwd)
-        self.id = -1
+        self.id = None
 
     def __str__(self):
         return "User(username={}, passwdHash={})".format(self.name, self.password)
@@ -180,7 +180,7 @@ class User:
                         WHERE u.username = ?;''', (username,))
         row = cur.fetchone()
         name, password, id = row
-        try:
-            return User(name, password, id)
-        except:
-            return None
+        #try:
+        return User(name, password, id)
+        #except:
+            #return None
