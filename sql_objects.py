@@ -1,49 +1,74 @@
 import sqlite3
+from api_errors import *
 
 conn = sqlite3.connect('database.db')
+conn.execute("PRAGMA foreign_keys = ON")
+conn.row_factory = sqlite3.Row
 cur = conn.cursor()
 
-def auth_required(fn):
-    def inner(user, *args):
-        return fn()
-    return inner
-
-
-class Bucket:
-    def __init__(self, title, *args):
+class List:
+    def __init__(self, title, uid, id):
         self.title = title
-        self.items = [a for a in args]
-        self.i = -1
+        self.uid = uid
+        self.id = id
 
-    def __iter__(self):
-        return iter(self.items)
+    def add(self):
+        '''
+        Add a bucket list to the given user,
+        Throws an error if user doesn't exist
+        or bucket object invalid
+        '''
+        cur.execute('INSERT INTO lists (uid, title) VALUES (?, ?);', (self.uid, self.title))
+        conn.commit()
 
-    @staticmethod
-    @auth_required
-    def add_bucket(user):
+    def update(self):
+        '''
+        Edit the bucket list of a given user.
+        '''
+        cur.execute('''
+                    UPDATE lists
+                    SET title = ?, userid = ?
+                    WHERE id = self.id;
+                    ''', (self.title, self.uid))
+        conn.commit()
+
+    def delete(self):
+        cur.execute('''
+                    DELETE FROM lists
+                    WHERE id = ?;
+                    ''', (self.id,)
+                   )
+        conn.commit()
+
+    def search(self):
         pass
 
     @staticmethod
-    @auth_required
-    def edit_bucket(user, **kwargs):
-        pass
+    def get(list_id):
+        '''
+        Get the bucket data of a given user
+        '''
+        cur.execute('''
+                    SELECT title, userid, id
+                    FROM lists
+                    WHERE id = ?;
+                    ''', (list_id,))
+        row = cur.fetchone()
+        #title, uid, id = row
+        return List(*row)
+        #raise BucketNotFoundError("Bucket List of {} not found".format(user.name))
 
-    @staticmethod
-    def get(bucket):
-        cur.execute()##Insert SQL Here
-        cer.fetchone()
-        for row in cur:
-            title, *args = row
-            return Bucket(title, args)
 
-
-class Goal:
+class Item:
     def __init__(self, vals):
         self.completed = False
         self.text = ''
+        self.image = ''
         for a in vals:
             if isinstance(a, int):
                 self.completed = bool(a)
+            elif a.startswith('static/'):
+                self.image = a.strip()
             else:
                 self.text = a.strip()
 
@@ -55,46 +80,54 @@ class Goal:
 
 class User:
     def __init__(self, args):
-        self.name, self.passwd = args
-        self.bucket = None
+        self.name, self.passwd, self.id = args
+        #self.bucket = None
 
     def __str__(self):
         return "User(username={}, passwdHash={})".format(self.name, self.passwd)
 
-    def link_bucket(self, bucket):
+    #def link_bucket(self, bucket):
         '''
         Links the bucket to the User instance.
         '''
-        self.bucket = bucket
+        #self.bucket = bucket
 
-    @staticmethod
-    def add_user(user):
+    def add(self):
         '''
-        Adds a user to the database, gets passed a User object,
+        Adds a user to the database,
         returns None if user already exists.
         '''
-        cur.execute("SELECT * FROM User WHERE username = ?", (user.name,))
-        for row in cur:
-            return None
-        cur.execute('INSERT INTO User VALUES (NULL, ?, ?)', (user.name, user.passwd))
+        #cur.execute("SELECT * FROM users WHERE username = ?;", (self.name,))
+        #for row in cur:
+        #    raise UserExistsError("User {} already Exists!!!".format(self.name))
+        cur.execute('INSERT INTO users (username, password) VALUES (?, ?);', (self.name, self.passwd))
         conn.commit()
 
-    @staticmethod
-    @auth_required
-    def delete_user(user):
+    def update(self):
         '''
-        Deletes a user, gets passed a user object,
-        Checks for authentication first.
+            Does this update the user's password?
         '''
-        cur.execute('')
+        cur.execute('''
+                    UPDATE users
+                    SET password = ?
+                    WHERE id = ?
+                    ''', (self.password, self.id))
+        conn.commit()
 
-    @staticmethod
-    @auth_required
-    def edit_user(user, **kwargs):
-        '''
-        Edit the details of a user as passed in a dictionary
-        '''
+    def search(self):
+        ##TODO fill this out
         pass
+
+    def delete(self):
+        '''
+        Deletes a user,
+        !!!Check for authentication first!!!
+        '''
+        cur.execute('''
+                    DELETE FROM users
+                    WHERE username = ?;
+                    ''', (self.name,))
+        conn.commit()
 
     @staticmethod
     def get(username):
@@ -102,30 +135,27 @@ class User:
         Get a User object with the details of the found user,
         returns None if no user found
         '''
-        cur.execute('''SELECT u.username, u.password
-                        FROM User u
-                        WHERE u.username = ?;''', (username,))##Insert SQL Here
-        cur.fetchone()
-        for row in cur:
-            print(row)
-            return User(row)
-        print("Error! User not found!")
-        return None
+        cur.execute('''SELECT username, password, id
+                        FROM users u
+                        WHERE u.username = ?;''', (username,))
+        row = cur.fetchone()
+
+        return User(*row)
 
 #Setup the users table
-#print(' '.join(open("UserSQL").read().split("\n")))
-#cur.executescript(open("UserSQL").read())
+#Insert sql here?
 
-g = Goal(('Complete the website to MVP standards. ', 0))
-g1 = Goal(('Complete the website to MVP+1 standards. ', 0))
-g2 = Goal(('Complete the website to MVP+2 standards. ', 0))
-bucket = Bucket("Website Goals", g, g1, g2)
+
+g = Item(('Complete the website to MVP standards. ', 0))
+g1 = Item(('Complete the website to MVP+1 standards. ', 0))
+g2 = Item(('Complete the website to MVP+2 standards. ', 0))
+bucket = List("Website Goals", g, g1, g2)
 for a in bucket:
     print(a)
 user = User(('mitchell', 'hello'))
 print(User.add_user(user))
 user = User.get('mitchell')
 print(user)
-cur.execute("SELECT * from User")
+cur.execute("SELECT * from users")
 for row in cur:
     print(row)
