@@ -1,4 +1,4 @@
-import sqlite3
+import sqlite3, datetime
 from api_errors import *
 
 conn = sqlite3.connect('database.db')
@@ -23,7 +23,7 @@ class List:
         or bucket object invalid
         '''
         self.created = datetime.datetime.now()
-        cur.execute('INSERT INTO lists (uid, title, created) VALUES (?, ?, ?);', (self.uid, self.title, self.created))
+        cur.execute('INSERT INTO lists (userid, title, created) VALUES (?, ?, ?);', (self.uid, self.title, self.created))
         conn.commit()
         self.id = cur.lastrowid
 
@@ -115,13 +115,13 @@ class Item:
         Get an item object given an item id.
         '''
         cur.execute('''
-                    SELECT completed, text, image, list_id
+                    SELECT completed, text, image, listid
                     FROM items WHERE id = ?;
-                    ''', (item_id))
+                    ''', (item_id,))
         row = cur.fetchone()
         if row is not None:
             completed, text, image, list_id = row
-            return Item(item_id, list_id, completed, text, image)
+            return Item(list_id, completed, text, image, item_id)
         return None
 
     def search(self):
@@ -133,7 +133,7 @@ class Item:
         '''
         cur.execute('''
                     UPDATE items
-                    SET list_id = ?, text = ?, image = ?, completed = ?
+                    SET listid = ?, text = ?, image = ?, completed = ?
                     WHERE id = ?
                     ''', (self.list_id, self.text, self.image, int(self.completed), self.id))
         conn.commit()
@@ -160,9 +160,9 @@ class User:
         Adds a user to the database,
         returns None if user already exists.
         '''
-        #cur.execute("SELECT * FROM users WHERE username = ?;", (self.name,))
-        #for row in cur:
-        #    raise UserExistsError("User {} already Exists!!!".format(self.name))
+        cur.execute("SELECT * FROM users WHERE username = ?;", (self.name,))
+        for row in cur:
+            raise UserExistsError("User {} already Exists!!!".format(self.name))
         cur.execute('INSERT INTO users (username, password) VALUES (?, ?);', (self.name, self.password))
         conn.commit()
         self.id = cur.lastrowid
@@ -211,15 +211,29 @@ class User:
             return User(name, password, id)
         return None
 
-user = User('mitchell', 'hello2')
-u2 = User.get("mitchell")
-print([tuple(a) for a in cur.execute("SELECT * FROM users").fetchall()])
-
-print([tuple(a) for a in cur.execute("SELECT * FROM users").fetchall()])
-user.add()
-l = List("Project Completion List", 0)
-i = Item(0,0, text="Finish this db api!")
-print(user)
-print(l)
-print(i)
-print([tuple(a) for a in cur.execute("SELECT * FROM users").fetchall()])
+if __name__ == "__main__":
+    u2 = User('test1', 'testp')
+    u2.add()
+    u2.password = "windowsisBad123"
+    u2.update()
+    l = List("test list for user test1", u2.id)
+    l.add()
+    l.title += "HUZZAH"
+    l.update()
+    l2 = List.get(l.id)
+    i = Item(l.id, text="Test goal for life")
+    i.add()
+    i2 = Item(l.id, image="test.png")
+    i2.add()
+    i2.set_completed()
+    i2.update()
+    item = Item.get(i2.id)
+    print(l)
+    print(l2)
+    print(i)
+    print(i2)
+    print(item)
+    item.delete()
+    i.delete()
+    l.delete()
+    u2.delete()
