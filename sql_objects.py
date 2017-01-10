@@ -124,18 +124,12 @@ class Item:
         conn.commit()
 
 class User:
-    def __init__(self, args):
-        self.name, self.passwd, self.id = args
-        #self.bucket = None
+    def __init__(self, name, passwd):
+        self.name, self.password = (name, passwd)
+        self.id = -1
 
     def __str__(self):
-        return "User(username={}, passwdHash={})".format(self.name, self.passwd)
-
-    #def link_bucket(self, bucket):
-        '''
-        Links the bucket to the User instance.
-        '''
-        #self.bucket = bucket
+        return "User(username={}, passwdHash={})".format(self.name, self.password)
 
     def add(self):
         '''
@@ -145,8 +139,9 @@ class User:
         #cur.execute("SELECT * FROM users WHERE username = ?;", (self.name,))
         #for row in cur:
         #    raise UserExistsError("User {} already Exists!!!".format(self.name))
-        cur.execute('INSERT INTO users (username, password) VALUES (?, ?);', (self.name, self.passwd))
+        cur.execute('INSERT INTO users (username, password) VALUES (?, ?);', (self.name, self.password))
         conn.commit()
+        self.id = cur.lastrowid
 
     def update(self):
         '''
@@ -184,21 +179,8 @@ class User:
                         FROM users u
                         WHERE u.username = ?;''', (username,))
         row = cur.fetchone()
-
-        return User(*row)
-
-#Setup the users table
-#Insert sql here?
-
-
-g = Item(('Complete the website to MVP standards. ', 0))
-g1 = Item(('Complete the website to MVP+1 standards. ', 0))
-g2 = Item(('Complete the website to MVP+2 standards. ', 0))
-bucket = List("Website Goals", 0, 0)
-user = User(('mitchell', 'hello'))
-print(User.add(user))
-user = User.get('mitchell')
-print(user)
-cur.execute("SELECT * from users")
-for row in cur:
-    print(row)
+        name, password, id = row
+        try:
+            return User(name, password, id)
+        except:
+            return None
