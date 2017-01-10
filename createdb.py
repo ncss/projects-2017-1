@@ -1,4 +1,8 @@
 import sqlite3
+import datetime
+
+open('database.db', 'w').close()
+
 conn = sqlite3.connect('database.db')
 cur = conn.cursor()
 
@@ -17,8 +21,9 @@ cur.execute('''
   	id INTEGER NOT NULL,
   	userid INTEGER NOT NULL,
   	title TEXT NOT NULL,
+    created TIMESTAMP NOT NULL,
   	PRIMARY KEY (id),
-  	FOREIGN KEY (userid) REFERENCES users(id)
+  	FOREIGN KEY (userid) REFERENCES users(id) ON DELETE CASCADE
 );
 '''
 )
@@ -27,26 +32,29 @@ cur.execute('''
   CREATE TABLE items (
   	id INTEGER NOT NULL,
   	listid INTEGER NOT NULL,
-  	text TEXT NOT NULL,
-    image TEXT NOT NULL,
+  	text TEXT,
+    image TEXT,
   	completed  INTEGER NOT NULL,
   	PRIMARY KEY (id),
-  	FOREIGN KEY (listid) REFERENCES lists(id)
+  	FOREIGN KEY (listid) REFERENCES lists(id) ON DELETE CASCADE
 );
 '''
 )
 
 cur.execute("INSERT INTO users VALUES (0, 'Isaac', 'password');")
-cur.execute("INSERT INTO users VALUES ( 1, 'Name1', 'word1');")
-cur.execute("INSERT INTO users VALUES ( 2, 'Name2', 'word2');")
-cur.execute("INSERT INTO users VALUES ( 3, 'Name3', 'word3');")
+cur.execute("INSERT INTO users VALUES (1, 'mitchell', 'hello');")
+cur.execute("INSERT INTO users VALUES (2, 'Name2', 'word2');")
+cur.execute("INSERT INTO users VALUES (3, 'Name3', 'word3');")
 
-cur.execute("INSERT INTO lists VALUES (0, 0,'listtittle');")
-cur.execute("INSERT INTO lists VALUES (1, 1,'listtittle1');")
-cur.execute("INSERT INTO lists VALUES (2, 2,'listtitle2');")
-cur.execute("INSERT INTO lists VALUES (3, 3, 'listtitle3');")
+now = datetime.datetime.now()
+cur.execute("INSERT INTO lists VALUES (0, 0, 'listtittle', ?);", (now,))
+cur.execute("INSERT INTO lists VALUES (1, 1, 'listtittle1', ?);", (now,))
+cur.execute("INSERT INTO lists VALUES (2, 2, 'listtitle2', ?);", (now,))
+cur.execute("INSERT INTO lists VALUES (3, 3, 'listtitle3', ?);", (now,))
 
-cur.execute("INSERT INTO items VALUES (0, 0,'Word1', 0 );")
-cur.execute("INSERT INTO items VALUES (1, 1,'Word2', 1 );")
-cur.execute("INSERT INTO items VALUES (2, 2,'Word3', 0 );")
-cur.execute("INSERT INTO items VALUES (3, 3, 'Word4', 1 );")
+cur.execute("INSERT INTO items VALUES (0, 0, 'Word1', NULL, 0 );")
+cur.execute("INSERT INTO items VALUES (1, 1, 'Word2', NULL, 1 );")
+cur.execute("INSERT INTO items VALUES (2, 2, 'Word3', NULL, 0 );")
+cur.execute("INSERT INTO items VALUES (3, 3, 'Word4', NULL, 1 );")
+
+conn.commit()
