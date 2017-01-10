@@ -99,7 +99,42 @@ class Parser:
             assert self.next() == '%}', 'Close expected %}'
             self.next()
             return p._parse_group()
+        match = re.match(r'^\s*if\s+(\S.*)', tag)
+        if match:
+            return self._parse_simple_if()
         assert False, 'Tag not recognised'
+
+    def _parse_simple_if(self):
+        predicate = self.peek()
+        close = self.next()
+
+        assert close == '%}', 'Close expected %}'
+
+        match = re.match(r'^\s*if\s+(\S.*)', predicate)
+        if match:
+            predicate = match.group(1)
+            tokens = []
+            while self.next() not in ['{%', '%}']:
+                tokens.append(self.peek())
+            if eval(predicate):
+                p = Parser(tokens)
+                node = p._parse_group()
+            else:
+                node = TextNode(None, '')
+
+            open_end_if = self.peek()
+            end_if = self.next()
+            close_end_if = self.next()
+            self.next()
+
+            assert open_end_if == '{%', 'Open expected {%'
+            assert end_if.strip() == 'end if', 'End if expected'
+            assert close_end_if == '%}', 'Close expected %}'
+
+            return node
+
+        assert False, 'If statement not recognised'
+
 
 class Node:
     def __init__(self, parent): #need better variable names
@@ -129,3 +164,8 @@ class ExpressionNode(Node): #after {{ --> treat as Python expression
 
     def render(self, context):
         return str(eval (self.expression, {}, context))
+
+class IfNode(Node):
+    def __init__(self, parent):
+        super(IfNode, self).__init__(parent)
+        self.predicate = predicate
