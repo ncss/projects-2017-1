@@ -28,8 +28,8 @@ class List:
         cur.execute('''
                     UPDATE lists
                     SET title = ?, userid = ?
-                    WHERE id = self.id;
-                    ''', (self.title, self.uid))
+                    WHERE id = ?;
+                    ''', (self.title, self.uid, self.id))
         conn.commit()
 
     def delete(self):
@@ -60,7 +60,7 @@ class List:
 
 
 class Item:
-    def __init__(self, vals):
+    def __init__(self, vals, id, list_id):
         self.completed = False
         self.text = ''
         self.image = ''
@@ -71,12 +71,57 @@ class Item:
                 self.image = a.strip()
             else:
                 self.text = a.strip()
+        self.id  = id
+        self.list_id = list_id
 
     def __str__(self):
         return "{} : {}".format(self.text, "Yes" if self.completed else "No")
 
     def set_completed(self):
         self.completed = not self.completed
+
+    def add(self):
+        '''
+        Add a bucket list item to the database.
+        '''
+        cur.execute('INSERT INTO items (listid, text, completed, image) VALUES (?, ?, ?, ?);', (self.list_id, self.text, int(self.completed), self.image))
+        conn.commit()
+
+    @staticmethod
+    def get(item_id):
+        '''
+        Get an item object given an item id.
+        '''
+        cur.execute('''
+                    SELECT completed, text, image, list_id
+                    FROM items WHERE id = ?;
+                    ''', (item_id))
+        row = cur.fetchone()
+        *val, list_id = row
+        return Item(val, item_id, list_id)
+
+    def search(self):
+        pass
+
+    def update(self):
+        '''
+        Push item changes to the database.
+        '''
+        cur.execute('''
+                    UPDATE items
+                    SET list_id = ?, text = ?, image = ?, completed = ?
+                    WHERE id = ?
+                    ''', (self.list_id, self.text, self.image, int(self.completed), self.id))
+        conn.commit()
+
+    def delete(self):
+        '''
+        Delete the item from the list.
+        '''
+        cur.execute('''
+                    DELETE FROM items WHERE id = ?
+                    ''', (self.id,))
+        conn.commit()
 
 class User:
     def __init__(self, args):
@@ -149,11 +194,9 @@ class User:
 g = Item(('Complete the website to MVP standards. ', 0))
 g1 = Item(('Complete the website to MVP+1 standards. ', 0))
 g2 = Item(('Complete the website to MVP+2 standards. ', 0))
-bucket = List("Website Goals", g, g1, g2)
-for a in bucket:
-    print(a)
+bucket = List("Website Goals", 0, 0)
 user = User(('mitchell', 'hello'))
-print(User.add_user(user))
+print(User.add(user))
 user = User.get('mitchell')
 print(user)
 cur.execute("SELECT * from users")
