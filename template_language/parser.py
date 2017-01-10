@@ -7,6 +7,15 @@ TERMINALS = re.compile('\{\{|\}\}|\{\%|\%\}')
 #oops, changed constant
 #TOKENS = [re.compile() for token in TOKENS] #list comprehension
 
+def render_template(template):#TODO add
+    #TODO template is only a string
+    tokeniser = Tokeniser()
+    tokens = tokeniser.tokenise(template)
+
+    parser = Parser(tokens)
+    parser.parse()
+
+
 class Tokeniser:
     def tokenise(self, text):
         tokens = []
@@ -24,8 +33,6 @@ class Tokeniser:
                 text = ''
         return tokens
 
-
-
 class Parser:
     def __init__(self, tokens):
         self._tokens = tokens
@@ -40,11 +47,22 @@ class Parser:
 
     def next(self):
         self._upto += 1
+        return self.peek()
 
     def parse(self):
+        root = self._parse_group()
+        return root.render()
+
+    def _parse_group(self): #doesn't eat any tokens directly
+        node = GroupNode(None) #TODO needs parent
+        while not self.end():
+            node.children.append(self._parse_components())
+        return node
+
+    def _parse_components(self): #doesn't eat any tokens directly
         if self.peek() == '{{':
-            node = self._parse_exp()
-        elif self.peek() == '{%'
+            node = self._parse_expr()
+        elif self.peek() == '{%':
             node = self._parse_tag()
         else:
             node = self._parse_text()
@@ -53,14 +71,25 @@ class Parser:
     def _parse_text(self):
         #TODO: define parent (keep track)
         node = TextNode(None, self.peek())
-        self.next()
+        self.next() #moves parse to past text
         return node
 
-    """
-    def _parse_exp(self):
-        current = node
+    def _parse_expr(self):
+        current = self.peek()
         expr = self.next()
-    """
+        close = self.next()
+        self.next() #moves parser to past closed token
+
+        #TODO if current != '{{':
+            #raise currentError('')
+
+        assert current == '{{', 'Current expected {{'
+        assert close == '}}', 'Close expected }}'
+
+        assert expr, 'Expression expected'
+
+        node = ExpressionNode(None, expr) #TODO needs parent
+        return node
 
 class Node:
     def __init__(self, parent): #need better variable names
