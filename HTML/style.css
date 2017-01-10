@@ -10,18 +10,19 @@ header h1 {
   margin-top: 0px;
   display: inline-block;
   border-bottom: 2px solid;
+  z-index: 20;
 }
 
 header {
   background-color: rgba(170, 170, 170, 0.27);
   position: fixed;
   width: 100%;
-  margin-top: -20px;
+
 }
 
 main {
   padding-top: 10%;
-  width: 40%;
+  width: 90%;
   margin: auto;
   text-align: center;
 }
@@ -84,6 +85,9 @@ p {
 figcaption {
   font-family: Comfortaa;
 }
+figure {
+  margin: 20px;
+}
 footer {
   font-family: Comfortaa;
 }
@@ -92,8 +96,11 @@ fieldset {
 
 }
 
-img {
+main.news-feed img  {
   max-height: 100px;
   max-width: 200px;
 
+}
+input {
+  display: block;
 }
