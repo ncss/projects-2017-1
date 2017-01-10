@@ -2,10 +2,12 @@
 <html>
 <head>
   <link rel="stylesheet" type="text/css" href="#">
+  <script src="../js/masonry.pkgd.min.js"></script>
+  <title>
+    Newsfeed
+  </title>
 </head>
-<title>
-  Newsfeed
-</title>
+
 
 <header>
   <img src="https://openclipart.org/image/800px/svg_to_png/194077/Placeholder.png" alt="Temp GO-Logo" width=80 height=80/>
@@ -43,13 +45,19 @@
   FLOATING button
 
 </button>
+<script>
+var elem = document.querySelector('.news-feed');
+var msnry = new Masonry( elem, {
+  // options
+  itemSelector: 'figure',
+  columnWidth: 200
+});
 
-
-
-
-
-
-
-
+// element argument can be a selector string
+//   for an individual element
+var msnry = new Masonry( '.news-feed', {
+  // options
+});
+</script>
 
 </html>
