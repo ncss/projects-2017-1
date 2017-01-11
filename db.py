@@ -122,11 +122,14 @@ class List:
 
 
     @staticmethod
+    def get_newest():
         '''
+        Get bucket lists by creation date
         '''
         cur.execute('''
                     SELECT created, title, userid, id
                     FROM lists
+                    ORDER BY created DESC
                     ''')
         create = []
         for row in cur:
