@@ -58,11 +58,11 @@ class List:
         search_keys = []
         search_values = []
 
-        search_options = ['id', 'userid', 'title', 'created']
+        search_options = ['title', 'userid', 'id', 'created']
 
         for key, value in kwargs.items():
             if value is not None and key in search_options:
-                search_keys.append(key + ' = ?')
+                search_keys.append(key + '=?')
                 search_values.append(value)
 
         if search_keys == [] or search_values == []:
@@ -249,7 +249,7 @@ class User:
         Adds a user to the database,
         returns None if user already exists.
         '''
-        cur.execute("SELECT * FROM users WHERE username = ?;", (self.name,))
+        cur.execute("SELECT * FROM users WHERE username = ?", (self.name,))
         for row in cur:
             raise UserExistsError("User {} already Exists!!!".format(self.name))
         cur.execute('INSERT INTO users (username, password) VALUES (?, ?);', (self.name, self.password))
@@ -269,6 +269,10 @@ class User:
 
     @staticmethod
     def search(**kwargs):
+
+        '''
+        Runs search and returns "Invalid search" if username not found
+        '''
 
         search_keys = []
         search_values = []
@@ -377,7 +381,7 @@ class User:
 
 
 if __name__ == "__main__":
-    u2 = User('test1', 'testp')
+    '''u2 = User('test1', 'testp')
     u2.add()
     u2.password = "windowsisBad123"
     u2.update()
@@ -402,20 +406,15 @@ if __name__ == "__main__":
     item.delete()
     i.delete()
     l.delete()
-    u2.delete()
-
+    u2.delete()'''
 
     # Testing search methods
-    '''u = User('test', 'test')
-    u.add()
-    l = List('test', )
+    #u = User('test', 'test')
+    #u.add()
+    l = List('test', 'test')
     l.add()
-    i = Item(l.id, text='test')
-    i.add()
-    print(u)
-    print(l)
-    print(i)'''
+    #i = Item(l.id, text='test')
+    #i.add()
     print(User.search(username='test', password='test'))
     print(List.search(title='test', userid='test'))
     print(Item.search(listid=4, text='test'))
-    User.delete()
