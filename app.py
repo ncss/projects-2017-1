@@ -112,7 +112,7 @@ def logout_handler(request):
     request.redirect(r'/')
 
 def error404_handler(request):
-    request.write(render_template('404.html', {}))
+    request.write(render_template('404.html', {'title' : 'Error 404'}))
 
 # GET /list/create - Call create screen
 # POST /list/create - Post list to server and redirects to created list.
