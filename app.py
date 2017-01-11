@@ -138,7 +138,7 @@ server = Server()
 server.register(r'/', index_handler)
 server.register(r'/login', login_handler)
 server.register(r'/list/create', list_creation_handler)
-server.register(r'/list/(\d+)/', list_display_handler)
+server.register(r'/list/(\d+)', list_display_handler)
 server.register(r'/logout', logout_handler)
 server.register(r'/user/create', signup_handler)
 
