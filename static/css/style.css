@@ -117,12 +117,24 @@ button.floating {
   padding: 10px 15px;
 }
 
-.upload-button:hover {
+.upload-button:hover, .save-button:hover {
   background-color: rgba(81, 81, 81, 0.57);
 }
 
+.bucket-list input[type=checkbox] {
+  display:none;
+}
+
+.bucket-list .item * {
+  opacity: 0.7
+}
+
+.bucket-list input:checked + .item {
+  background-color: gray;
+}
+
 button:hover {
-  transition:background-color 0.6s;
+  transition: background-color 0.6s;
   background-color: lightgrey; /*change to color of border*/
 }
 
