@@ -27,24 +27,21 @@ How to have if-statements
 {% if predicate %} what to do if predicate is True {% end if %}
 e.g.  {% if user_logged_in %} user {{username}} is logged in {% end if %}
 
-!!!Can nest if-statements and for-statements (let Annie/Angela know if not working)
 
 How to have for loops
 {% for variable in expression %} block to repeat {% end for %}
 e.g.  {% for user in users %} {{user}} exists {% end for %}
 
-!!!Can nest if-statements and for-statements (let Annie/Angela know if not working)
 
-<<<<<<< HEAD
 How to have comments
 {% comment %} comment text {% end comment %}
 e.g.  {% comment %} this section sets the username {% end comment %}
-=======
+
+
 How to change variable in context dictionary
 {% let variable = expression %}
 e.g.  {% let username = 'hocrux' %} {{ username }}
-this will then output username as hocrux 
->>>>>>> origin/template-language
+this will then output username as hocrux
 
 =====================TORNADO TEAM=======================================
 
