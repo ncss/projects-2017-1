@@ -1,0 +1,41 @@
+control nodes contain a group node
+e.g. include contains a group node, renders by rendering the group node
+e.g. if contains a group node, renders by rendering the group node only if predicate true
+e.g. for contains a group node, renders by rendering the group node repeatedly with a changing context
+
+simplifying assumption - includes should be self contained (i.e. everything that opens in the include should also close in the include, includes should not close already open tags)
+
+
+render_template(template, context)
+   tokenise template
+   parse tokens into tree
+   render tree with context
+
+
+render(context)
+
+
+parse():
+    node = create a group node
+    return _parse(parent node, type of parent)
+
+
+_parse(parent, type):
+
+    while not end:
+
+	    if open expression tag:
+	      node = parse an expression node
+	      add node to children of parent
+
+	    elif open control flow tag:
+	   	  node = parse a control flow tag
+	      recursively parse(parent=the group node, type=tag's type)
+
+	    elif close control flow tag:
+	      check we're closing the correct tag type
+	      return
+
+	assert type == None
+
+	return
