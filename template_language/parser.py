@@ -87,6 +87,11 @@ class Parser:
                     self._parse(group_node, 'for')
                     parent.children.append(node)
 
+                if tag == 'comment':
+                    group_node = GroupNode()
+                    self._parse(group_node,'comment')
+                    ## Parse through a comment and not append to parent
+
                 if tag == 'end':
                     assert argument.strip() == parent_tag, 'close tag does not match open tag'
                     return
@@ -190,4 +195,6 @@ if __name__ == '__main__':
     print(render_template('complextest.txt', {'b': ['abc', 'def']}))
     print("====")
     print(render_template('safetest.txt', {'d': 'username'}))
+    print("====")
+    print(render_template('commenttest.txt', {'d': 'username'}))
     print("====")
