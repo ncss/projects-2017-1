@@ -16,12 +16,12 @@ def index_handler(request):
     cookie = request.get_secure_cookie('user_id')
     user = User.get_by_id(int(cookie))
     if cookie == None:
-        request.write(render_template('homepage.html', {'is_user' : is_authorised(request), 'title' : "Home Page" }))
+        request.write(render_template('homepage.html', {'is_user' : is_authorised(request), 'title' : "Home Page"}))
     else:
-        newsfeed = user.get_newsfeed()
-        users = [User.get_by_id(a.uid).name for a in newsfeed]
-        request.write(render_template('news-feed.html', {'names' : users, 'is_user' : is_authorised(request), 'title' : 'News Feed'}))
-
+        user = User.get_by_id(int(cookie))
+        names = user.get_newsfeed()
+        names = [user.get_by_id(a.uid).name for a in names]
+        request.write(render_template('news-feed.html', {'names':names,'is_user' : is_authorised(request), 'title' : 'News Feed', 'user' : user.name}))
 
 def login_handler(request):
     method = request.request.method
