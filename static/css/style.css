@@ -12,7 +12,12 @@ header h1 {
   color: white;
 
 }
+header span {
+  font-family: 'Amatic SC';
+  font-size: 40px;
+  padding-right: 100px;
 
+}
 header img, header h1 {
    -webkit-filter: drop-shadow(0px 0px 5px rgba(0,0,0,0.2));
 }
