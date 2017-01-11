@@ -20,7 +20,7 @@ def index_handler(request):
 
         user = User.get_by_id(int(cookie))
         names = user.get_newsfeed()
-        names = [user.get_by_id(a.uid).name for a in names]
+        names = [user.get_by_id(a.userid).name for a in names]
         request.write(render_template('news-feed.html', {'names':names, 'is_user' : is_authorised(request), 'title' : 'News Feed', 'user' : user.name}))
 
 
@@ -59,30 +59,32 @@ def list_creation_handler(request):
         ##Get the User
         user = User.get_by_id(int(request.get_secure_cookie('user_id')))
         #Get a new Item object
-        item = Item(List.get_user_lists(user)[0].id, text=textdesc)
-        item.add()
-        head, contype, body = request.get_file('file_upload')
-        if head != '':
-            item.image = head
-            head = head.split('.')[-1]
-            filename = 'static/img/list/{}/item{}.{}'.format(user.name, item.id, head)
-            with open(filename, 'wb') as f:
-                f.write(body)
-            item.update()
-            request.redirect(r'/list/{}/'.format(item.list_id))
+        ls = List.get_user_lists(user)
+        if ls:
+            item = Item(ls[0].id, text=textdesc)
+            item.add()
+            head, contype, body = request.get_file('file_upload')
+            if head != '':
+                item.image = head
+                head = head.split('.')[-1]
+                filename = 'static/img/list/{}/item{}.{}'.format(user.name, item.id, head)
+                with open(filename, 'wb') as f:
+                    f.write(body)
+                item.update()
+                request.redirect(r'/list/{}/'.format(item.list_id))
 
 def list_display_handler(request, list_id):
     method = request.request.method
     if method == 'GET':
         ls = List.get(int(list_id))
         if ls:
-            user = User.get_by_id(ls.uid)
+            user = User.get_by_id(ls.userid)
             bucket = [a.id for a in ls.get_items()]
             items = {}
             for item in bucket:
                 items[item] = Item.get(item)
             print(items)
-            request.write(render_template('my_bucket_list.html', {'user' : user.name, 'is_user' : is_authorised(request), 'list_title' : ls.title, 'user_name' : user.name, 'list_id' : ls.id, 'title' : "{}\'s Bucket List\'".format(user.name)}))
+            request.write(render_template('my_bucket_list.html', {'bucket' : bucket, 'items':items, 'user' : user.name, 'is_user' : is_authorised(request), 'list_title' : ls.title, 'user_name' : user.name, 'list_id' : ls.id, 'title' : "{}\'s Bucket List\'".format(user.name)}))
         else:
             pass
             # TODO pass list doesnt exist

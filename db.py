@@ -114,7 +114,7 @@ class List:
     def get_items(self):
         cur.execute('''SELECT listid, completed, text, image, id
                        FROM items
-                       WHERE listid=?;''' (self.id,))
+                       WHERE listid=?;''', (self.id,))
         items = []
         for row in cur:
             listid, completed, text, image, id = row
