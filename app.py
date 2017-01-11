@@ -2,6 +2,15 @@ from tornado.ncss import Server
 from db import *
 from template_language.parser import render_template
 
+def is_authorised(request):
+    cookie = request.get_secure_cookie('user_id')
+    if not cookie:
+        return False
+    user = User.get_by_id(int(cookie))
+    if not user:
+        return False
+    return True
+
 def index_handler(request):
     cookie = request.get_secure_cookie('user_id')
     if cookie == None:
@@ -11,6 +20,10 @@ def index_handler(request):
 
 def login_handler(request):
     method = request.request.method
+    if is_authorised(request):
+        request.redirect(r'/')
+        return
+
     if method == 'GET':
         request.write(render_template('login.html', {'location' : '/login'}))
     elif method == 'POST':
@@ -24,6 +37,10 @@ def login_handler(request):
 
 def list_creation_handler(request):
     method = request.request.method
+    if not is_authorised(request):
+        request.redirect(r'/login')
+        return
+
     if method == 'GET':
         request.write(render_template('create.html', {'title' : 'Create A List'}))
         # with open("not_instagram.html") as f:
@@ -51,8 +68,12 @@ def list_display_handler(request, list_id):
 
 def signup_handler(request):
     method = request.request.method
+    if is_authorised(request):
+        request.redirect(r'/')
+        return
+
     if method == 'GET':
-        request.write(render_template('login.html', {'title' : 'Sign Up'}))
+        request.write(render_template('login.html', {'location' : '/user/create'}))
     elif method == 'POST':
         print("running post")
         username = request.get_field('username')
@@ -69,6 +90,10 @@ def signup_handler(request):
         request.redirect(r'/')
 
 def logout_handler(request):
+    if not is_authorised(request):
+        request.redirect(r'/')
+        return
+
     request.clear_cookie('user_id')
     request.redirect(r'/')
 
