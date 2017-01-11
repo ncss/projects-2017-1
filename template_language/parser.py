@@ -138,7 +138,6 @@ class TextNode(Node): #taking in html text --> do nothing
     def render(self, context):
         return self.text
 
-
 class ExpressionNode(Node): #after {{ --> treat as Python expression
     def __init__(self, expression):
         super(ExpressionNode, self).__init__()
@@ -165,7 +164,6 @@ class ForNode(Node):
             for_list.append(self.group_node.render(context)) #TODO security vulnerability?
         return ''.join(for_list)
 
-
 class IfNode(Node):
     def __init__(self, predicate, group_node):
         super(IfNode, self).__init__()
@@ -176,7 +174,7 @@ class IfNode(Node):
         if eval(self.predicate, {}, context):
             result = self.group_node.render(context)
             return result
-        return ""
+        return ''
 
 if __name__ == '__main__':
     TEMPLATES_PATH = 'test_templates'
