@@ -11,6 +11,7 @@ header h1 {
   display: inline-block;
   border-bottom: 2px solid;
   z-index: 20;
+
 }
 
 header {
@@ -41,11 +42,11 @@ nav {
   margin-right: 60px;
 }
 nav a {
-  font: 20px Comfortaa;
+  font: 25px Comfortaa;
   margin-right: 40px;
   margin-top: 30px;
   display: inline-block;
-  color: black;
+  color: white;
   text-decoration: none;
 
 }
@@ -111,6 +112,21 @@ main, .login-section form, .login-section input {
   position: relative;
   margin: auto;
   margin-bottom: 5px;
+}
+
+.login-section {
+  position: absolute;
+  top: 50%;
+  bottom: 50%;
+  margin-top: -300px;
+  margin-left: 95px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+form img {
+  padding-bottom: 15px;
 
 }
 

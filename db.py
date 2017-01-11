@@ -52,8 +52,31 @@ class List:
                    )
         conn.commit()
 
-    def search(self):
-        pass
+    @staticmethod
+    def search(**kwargs):
+
+        search_key = ''
+        search_value = ''
+
+        search_options = ['id', 'userid', 'title']
+
+        for key, value in kwargs:
+
+            if value is not None and key in search_options:
+                search_key = key
+                search_value = value
+
+        cur.execute('''
+
+            SELECT title, userid, id
+            FROM lists
+            WHERE {} = ?
+            '''.format(search_key), (search_value,)
+        )
+
+        rows = cur.fetchall()
+
+        return [List(*row) for row in rows]
 
     @staticmethod
     def get(list_id):
@@ -87,6 +110,32 @@ class List:
             lists.append(List(title, uid, id, created))
         return lists
 
+    def get_items(self):
+        cur.execute('''SELECT listid, completed, text, image, id
+                       FROM items
+                       WHERE listid=?;''' (self.id,))
+        items = []
+        for row in cur:
+            listid, completed, text, image, id = row
+            items.append(Item(listid, completed, text, image, id))
+        return items
+
+
+    @staticmethod
+    def get_newest():
+        '''
+        Get bucket lists by creation date
+        '''
+        cur.execute('''
+                    SELECT created, title, userid, id
+                    FROM lists
+                    ORDER BY created DESC
+                    ''')
+        create = []
+        for row in cur:
+            created, title, userid, id = row
+            create.append(List(title, userid, id, created))
+        return create
 
 class Item:
     def __init__(self, list_id, completed=False, text=None, image=None, id=None):
@@ -130,8 +179,29 @@ class Item:
             return Item(list_id, completed, text, image, item_id)
         return None
 
-    def search(self):
-        pass
+    def search(self, id=None, list_id=None, text=None, rank=None, completed=None, image=None):
+
+        search_key = ''
+        search_value = ''
+
+        '''
+        for key, value in **kwargs.items():
+            if value is not None:
+                search_key = key
+                search_value = value
+
+        '''
+
+        cur.execute('''
+
+        SELECT id, list_id, text, rank, completed, image
+        FROM items
+        WHERE {} = ?
+        '''.format(search_key), (search_value,))
+
+        rows = cur.fetchall()
+
+        return [List(*row) for row in rows]
 
     def update(self):
         '''
@@ -185,9 +255,28 @@ class User:
                     ''', (self.password, self.id))
         conn.commit()
 
-    def search(self):
-        ##TODO fill this out
-        pass
+    def search(self, username=None, id=None):
+
+        search_key = ''
+        search_value = ''
+        # Does kwargs need to be defined?
+        '''
+        for key,value in **kwargs.items():
+            if value is not None:
+                search_key = key
+                search_value = value
+        '''
+
+        cur.execute('''
+
+        SELECT from username, password, id
+        FROM users
+        WHERE {} = ?
+        '''.format(search_key), (search_value,))
+
+        rows = cur.fetchall()
+
+        return [List(*row) for row in rows]
 
     def delete(self):
         '''
@@ -217,6 +306,51 @@ class User:
             name, password, id = row
             return User(name, password, id)
         return None
+
+    @staticmethod
+    def get_by_id(id):
+        '''
+        Get a User object with the details of the found user,
+        returns None if no user found
+        '''
+        cur.execute('''SELECT username, password, id
+                        FROM users u
+                        WHERE u.id = ?;''', (id,))
+        row = cur.fetchone()
+        if row is not None:
+            name, password, id = row
+            return User(name, password, id)
+        return None
+
+    def get_lists(self):
+        '''
+        Get the bucket lists of a given user
+        '''
+        cur.execute('''
+                    SELECT title, userid, id, created
+                    FROM lists
+                    WHERE userid = ?;
+                    ''', (self.id,))
+        lists = []
+        for row in cur:
+            title, userid, id, created = row
+            lists.append(List(title, userid, id, created))
+        return lists
+
+    def get_newsfeed(self):
+        '''
+        Gets the items for newsfeed (lists other than active user)
+        '''
+        cur.execute('''SELECT title, userid, id, created
+                    FROM lists
+                    WHERE userid != ?
+                    ''', (self.id,))
+        lists = []
+        for row in cur:
+            title, uid, id, created = row
+            lists.append(List(title, uid, id, created))
+        return lists
+
 
 if __name__ == "__main__":
     u2 = User('test1', 'testp')
