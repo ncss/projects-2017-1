@@ -4,22 +4,27 @@
 
 <main class="bucket-list">
   <h1>
-  My Tick It List
+  {{user}}'s Tick It List
 </h1>
+<form action="/list/{{ list_id }}" method="post">
+
   {% for item in bucket%}
-  <form action="/list/{{ list_id }}" method="post">
   <img src="{{items[item].image}}" alt="item" width=80 height=80>
-  <p>
-    {{items[item].text}}
-  </p>
+  <p>{{items[item].text}}</p>
+  {% if user == logged_in_username%}
+  <input type="checkbox" name="check{{item}}" {% if items[item].completed%}checked{%end if%}>
+  {% end if %}
   {% end for%}
 
+  {% if user == logged_in_username %}
+  <button class="add-button">
+  <a href="/list/create">Add</a>
+  </button>
+  {% end if %}
 
-
-<div class="buttons-container">
-<a href="/list/{{ list_id }}"> EDIT </a>
-</div>
-
+  <button class="save-button" type="submit">
+  Save
+  </button>
     <script src="../js/masonryfooter.js"></script>
 </form>
 </main>

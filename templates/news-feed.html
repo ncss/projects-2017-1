@@ -6,12 +6,13 @@
   <section class="news-feed">
     {% for user in names %}
       <figure>
-        <a href="/{{ user }}">
-          <img src="https://openclipart.org/image/2400px/svg_to_png/194077/Placeholder.png" width="200" height="200"/>
+        <a href="/{{ user.id }}">
+          <img src="https://openclipart.org/image/2400px/svg_to_png/194077/Placeholder.png" />
         </a>
-        <figcaption>{{ user }}</figcaption>
+        <figcaption>{{ user.name }}</figcaption>
       </figure>
     {% end for %}
   </section>
 </main
+
   <script src="/static/js/masonryfooter.js"></script>

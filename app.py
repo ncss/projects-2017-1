@@ -19,10 +19,10 @@ def index_handler(request):
     else:
         user = User.get_by_id(int(cookie))
         ls = List.get_user_lists(user)
-        print(ls)
         names = user.get_newsfeed()
-        names = [user.get_by_id(a.userid).name for a in names]
-        request.write(render_template('news-feed.html', {'list_id': ls[0].id, 'user_id': user.id, 'names':names, 'is_user' : is_authorised(request), 'title' : 'News Feed', 'user' : user.name}))
+        names = [user.get_by_id(a.userid) for a in names]
+        user_list = user.get_lists()[0]
+        request.write(render_template('news-feed.html', {'user_id': user.id, 'names':names, 'is_user' : is_authorised(request), 'title' : 'News Feed', 'user' : user.name, 'user_list': user_list.id}))
 
 
 def login_handler(request):
@@ -51,7 +51,8 @@ def list_creation_handler(request):
     user = User.get_by_id(int(request.get_secure_cookie('user_id')))
 
     if method == 'GET':
-        request.write(render_template('create.html', {'user' : user.name, 'is_user' : is_authorised(request), 'title' : 'Create A List'}))
+        user_list = user.get_lists()[0]
+        request.write(render_template('create.html', {'user' : user.name, 'is_user' : is_authorised(request), 'title' : 'Create A List', 'user_list': user_list.id}))
         # with open("not_instagram.html") as f:
         #     request.write(f.read())
         #     return
@@ -59,39 +60,56 @@ def list_creation_handler(request):
         textdesc = request.get_field('description')
         ##Get the User
         user = User.get_by_id(int(request.get_secure_cookie('user_id')))
+        head, contype, body = request.get_file('file_upload')
         #Get a new Item object
         ls = List.get_user_lists(user)
-        if ls:
+        if ls and (head or textdesc):
             item = Item(ls[0].id, text=textdesc)
             item.add()
-            head, contype, body = request.get_file('file_upload')
-            if head != '':
+            if head:
                 item.image = head
                 head = head.split('.')[-1]
                 filename = 'static/img/list/{}/item{}.{}'.format(user.name, item.id, head)
+                item.image = '/'+filename
                 with open(filename, 'wb') as f:
                     f.write(body)
                 item.update()
-                request.redirect(r'/list/{}/'.format(item.list_id))
+                request.redirect(r'/list/{}'.format(item.list_id))
+        else:
+            pass
+            #TODO handle invalid item input here
 
 def list_display_handler(request, list_id):
     method = request.request.method
+
+    if not is_authorised(request):
+        request.redirect(r'/')
+        return
+
     if method == 'GET':
         ls = List.get(int(list_id))
         if ls:
             user = User.get_by_id(ls.userid)
+            user_list = user.get_lists()[0]
+            user2 = User.get_by_id(int(request.get_secure_cookie('user_id')))
             bucket = [a.id for a in ls.get_items()]
             items = {}
             for item in bucket:
                 items[item] = Item.get(item)
-            print(items)
-            request.write(render_template('my_bucket_list.html', {'bucket' : bucket, 'items':items, 'user' : user.name, 'is_user' : is_authorised(request), 'list_title' : ls.title, 'user_name' : user.name, 'list_id' : ls.id, 'title' : "{}\'s Bucket List\'".format(user.name)}))
+            request.write(render_template('my_bucket_list.html', {'logged_in_username' : user2.name, 'bucket' : bucket, 'items':items, 'user' : user.name, 'is_user' : is_authorised(request), 'list_title' : ls.title, 'user_name' : user.name, 'list_id' : ls.id, 'title' : "{}\'s Bucket List\'".format(user.name), 'user_list': user_list.id}))
         else:
             pass
             # TODO pass list doesnt exist
     elif method == 'POST':
-        # submit checkboxes to database
-        pass
+        # TODO submit checkboxes to database
+        ls = List.get(int(list_id))
+        for i in [a.id for a in ls.get_items()]:
+            checked = request.get_field("check{}".format(i))
+            item = Item.get(i)
+            item.completed = bool(checked)
+            item.update()
+        request.redirect(r'/list/{}'.format(list_id))
+        return
 
 def signup_handler(request):
     method = request.request.method
@@ -106,7 +124,7 @@ def signup_handler(request):
         username = request.get_field('username')
         password = request.get_field('password')
         repeat_password = request.get_field('repeat_password')
-        if password == repeat_password:
+        if password == repeat_password and len(password) > 1:
             user = User.get(username)
             if user is not None:
                 raise Exception("User already exists cant add account.")
@@ -130,6 +148,9 @@ def logout_handler(request):
     request.clear_cookie('user_id')
     request.redirect(r'/')
 
+def error404_handler(request):
+    request.write(render_template('error404.html', { 'title' : "Error 404" }))
+
 # GET /list/create - Call create screen
 # POST /list/create - Post list to server and redirects to created list.
 # GET /list/<listID> - Shows list referring to listID or says list not found.
@@ -142,5 +163,6 @@ server.register(r'/list/create', list_creation_handler)
 server.register(r'/list/(\d+)', list_display_handler)
 server.register(r'/logout', logout_handler)
 server.register(r'/user/create', signup_handler)
+server.register(r'/.+', error404_handler)
 
 server.run()
