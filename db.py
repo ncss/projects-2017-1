@@ -113,7 +113,7 @@ class List:
     def get_items(self):
         cur.execute('''SELECT listid, completed, text, image, id
                        FROM items
-                       WHERE listid=?;''' (self.id,)
+                       WHERE listid=?;''' (self.id,))
         items = []
         for row in cur:
             listid, completed, text, image, id = row
@@ -184,10 +184,13 @@ class Item:
         search_key = ''
         search_value = ''
 
+        '''
         for key, value in **kwargs.items():
             if value is not None:
                 search_key = key
                 search_value = value
+
+        '''
 
         cur.execute('''
 
@@ -257,10 +260,12 @@ class User:
         search_key = ''
         search_value = ''
         # Does kwargs need to be defined?
+        '''
         for key,value in **kwargs.items():
             if value is not None:
                 search_key = key
                 search_value = value
+        '''
 
         cur.execute('''
 
