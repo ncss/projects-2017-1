@@ -55,23 +55,21 @@ class List:
     @staticmethod
     def search(**kwargs):
 
-        search_key = ''
-        search_value = ''
+        search_keys = []
+        search_values = []
 
         search_options = ['id', 'userid', 'title']
 
         for key, value in kwargs:
-
             if value is not None and key in search_options:
-                search_key = key
-                search_value = value
+                search_keys.append(key + ' = ?')
+                search_values.append(value)
 
         cur.execute('''
-
             SELECT title, userid, id
             FROM lists
-            WHERE {} = ?
-            '''.format(search_key), (search_value,)
+            WHERE {}
+            '''.format(' AND '.join(search_keys)), tuple(search_values)
         )
 
         rows = cur.fetchall()
