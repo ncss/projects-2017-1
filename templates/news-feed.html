@@ -7,7 +7,7 @@
     {% for user in names %}
       <figure>
         <a href="/list/{{ user.id }}">
-          <img src="https://openclipart.org/image/2400px/svg_to_png/194077/Placeholder.png" />
+          <img src="/static/img/newsfeed/{{ user.id }}.jpg" width=200 height=200/>
         </a>
         <figcaption>{{ user.name }}</figcaption>
       </figure>
