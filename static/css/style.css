@@ -3,26 +3,28 @@ html,body {
 }
 
 header h1 {
-  font-family: Comfortaa;
-  font-size: 30px;
-  line-height: 33px;
-  margin-left: 60px;
-  margin-top: 0px;
+  font-family: 'Amatic SC';
+  font-size: 60px;
+  margin: 0px auto 0px auto;
   display: inline-block;
-  border-bottom: 2px solid;
-  z-index: 20;
+  position: relative;
+  bottom: 11px;
+  color: white;
 
 }
 
+header img, header h1 {
+   -webkit-filter: drop-shadow(0px 0px 5px rgba(0,0,0,0.2));
+}
+
 header {
-  background-color: rgba(170, 170, 170, 0.27);
+  background-color: rgba(81, 81, 81, 0.27);
   position: fixed;
   width: 100%;
 
 }
 
 main {
-  padding-top: 10%;
   width: 90%;
   margin: auto;
   text-align: center;
@@ -43,13 +45,18 @@ nav {
 }
 nav a {
   font: 25px Comfortaa;
-  margin-right: 40px;
-  margin-top: 30px;
+  padding-right: 40px;
+  padding-top: 30px;
   display: inline-block;
   color: white;
   text-decoration: none;
 
 }
+nav a:hover {
+  transition:color 0.6s;
+  color: rgb(81,81,81);
+}
+
 
 button , label {
   font-family: Comfortaa, 'sans-serif';
@@ -82,6 +89,7 @@ button , label {
 }
 
 button:hover {
+  transition:background-color 0.6s;
   background-color: lightgrey; /*change to color of border*/
 }
 
@@ -90,7 +98,7 @@ h1, h2, h3, h4, h5, h6 {
   font-family: Comfortaa;
 
 }
-h1 {
+main h1 {
   border-bottom: 2px solid;
 }
 
@@ -127,6 +135,21 @@ main, .login-section form, .login-section input {
   position: relative;
   margin: auto;
   margin-bottom: 5px;
+}
+
+.login-section {
+  position: absolute;
+  top: 50%;
+  bottom: 50%;
+  margin-top: -300px;
+  margin-left: 95px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+form img {
+  padding-bottom: 15px;
 
 }
 
@@ -179,6 +202,4 @@ main, .login-section form, .login-section input {
 
 /* Homepage */
 
-img#header{
-  width: 100%
-}
+ 

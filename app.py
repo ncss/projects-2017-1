@@ -1,18 +1,35 @@
 from tornado.ncss import Server
 from db import *
+import os
 from template_language.parser import render_template
+
+def is_authorised(request):
+    cookie = request.get_secure_cookie('user_id')
+    if not cookie:
+        return False
+    user = User.get_by_id(int(cookie))
+    if not user:
+        return False
+    return True
 
 def index_handler(request):
     cookie = request.get_secure_cookie('user_id')
     if cookie == None:
-        request.write(render_template('homepage.html', {}))
+        request.write(render_template('homepage.html', {'is_user' : is_authorised(request), 'title' : "Home Page"}))
     else:
-        request.write(render_template('news-feed.html', {'title' : 'News Feed'}))
+        user = User.get_by_id(int(cookie))
+        names = user.get_newsfeed()
+        names = [user.get_by_id(a.uid).name for a in names]
+        request.write(render_template('news-feed.html', {'names':names,'is_user' : is_authorised(request), 'title' : 'News Feed', 'user' : user.name}))
 
 def login_handler(request):
     method = request.request.method
+    if is_authorised(request):
+        request.redirect(r'/')
+        return
+
     if method == 'GET':
-        request.write(render_template('login.html', {'location' : '/login'}))
+        request.write(render_template('login.html', {'is_user' : is_authorised(request), 'location' : '/login', 'title' : "Login" }))
     elif method == 'POST':
         username = request.get_field('username')
         password = request.get_field('password')
@@ -24,35 +41,50 @@ def login_handler(request):
 
 def list_creation_handler(request):
     method = request.request.method
+    if not is_authorised(request):
+        request.redirect(r'/login')
+        return
+
     if method == 'GET':
-        request.write(render_template('create.html', {'title' : 'Create A List'}))
+        request.write(render_template('create.html', {'is_user' : is_authorised(request), 'title' : 'Create A List'}))
         # with open("not_instagram.html") as f:
         #     request.write(f.read())
         #     return
     elif method == 'POST':
         user = User.get_by_id(request.get_secure_cookie('user_id'))
-        title = request.get_field('description')
-        if user is not None:
-            print("HERE")
-            l = List(title, user.id)
-            l.add()
-            print("creating list : {}".format(l))
-            request.redirect('/list/{}/'.format(l.id))
+        textdesc = request.get_field('description')
+        im = request.get_field('image')
+        ##Get the User
+        user = User.get_by_id(int(request.get_secure_cookie('user_id')))
+        #Get a new Item object
+        item = Item(List.get_user_lists(user)[0].id, text=textdesc)
+        if im != '':
+            print(im)
+            item.image = im
+            *rubbish, body = request.get_file('image')
+            filename = 'static/img/list/{}/item{}.{}'.format(user.name, item.id, im.split('.')[-1])
+            with open(filename, 'wb') as f:
+                print(filename)
+                f.write(body)
 
 def list_display_handler(request, list_id):
     method = request.request.method
     if method == 'GET':
         ls = List.get(int(list_id))
         user = User.get_by_id(ls.uid)
-        request.write(render_template('my_bucket_list.html', {'list_title' : ls.title, 'user_name' : user.name, 'list_id' : ls.id}))
+        request.write(render_template('my_bucket_list.html', {'is_user' : is_authorised(request), 'list_title' : ls.title, 'user_name' : user.name, 'list_id' : ls.id, 'title' : "{}\'s Bucket List\'".format(user.name)}))
     elif method == 'POST':
         # submit checkboxes to database
         pass
 
 def signup_handler(request):
     method = request.request.method
+    if is_authorised(request):
+        request.redirect(r'/')
+        return
+
     if method == 'GET':
-        request.write(render_template('login.html', {'title' : 'Sign Up'}))
+        request.write(render_template('login.html', {'is_user' : is_authorised(request), 'location' : '/user/create', 'title' : "Sign Up" }))
     elif method == 'POST':
         print("running post")
         username = request.get_field('username')
@@ -65,10 +97,15 @@ def signup_handler(request):
             user = User(username, password)
             print("creating user : {}".format(user))
             user.add()
+            os.mkdir('static/img/list/{}/'.format(user.name))
             request.set_secure_cookie('user_id', str(user.id))
         request.redirect(r'/')
 
 def logout_handler(request):
+    if not is_authorised(request):
+        request.redirect(r'/')
+        return
+
     request.clear_cookie('user_id')
     request.redirect(r'/')
 

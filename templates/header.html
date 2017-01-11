@@ -1,22 +1,32 @@
-
 <head>
   <link rel="stylesheet" type="text/css" href="/static/css/style.css">
   <link href="https://fonts.googleapis.com/css?family=Comfortaa|Amatic+SC" rel="stylesheet">
   <script src="static/js/masonry.pkgd.min.js"></script>
   <script src="static/js/masonryfooter.js"></script>
   <title>
-    Create List
+    {{ title }}
   </title>
 </head>
 
 <header>
-    <img src="/static/img/tickit_logo_only.png" alt="Tick It LOGO" width=80 height=80>
+    <img src="/static/img/whitetickit_logo_only.png" alt="Tick It LOGO" width=80 height=80>
+    <h1> Tick It </h1>
+
+
   <nav>
-    <a href="/login">
-      Log In
+    {% if is_user %}
+    <span>{{ user }}</span>
+    <a href="/">
+      Sign Out
     </a>
-    <a href="/user/create" >
-      Sign Up
-    </a>
+    {% end if %}
+    {% if not is_user %}
+      <a href="/login">
+        Log In
+      </a>
+      <a href="/user/create" >
+        Sign Up
+      </a>
+    {% end if %}
   </nav>
 </header>
