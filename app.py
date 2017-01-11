@@ -17,10 +17,10 @@ def index_handler(request):
     if cookie == None:
         request.write(render_template('homepage.html', {'is_user' : is_authorised(request), 'title' : "Home Page"}))
     else:
-
         user = User.get_by_id(int(cookie))
+        ls = List.get_user_lists(user)
         names = user.get_newsfeed()
-        names = [user.get_by_id(a.userid).name for a in names]
+        names = [user.get_by_id(a.userid) for a in names]
         user_list = user.get_lists()[0]
         request.write(render_template('news-feed.html', {'user_id': user.id, 'names':names, 'is_user' : is_authorised(request), 'title' : 'News Feed', 'user' : user.name, 'user_list': user_list.id}))
 
@@ -32,15 +32,16 @@ def login_handler(request):
         return
 
     if method == 'GET':
-        request.write(render_template('login.html', {'is_user' : is_authorised(request), 'location' : '/login', 'title' : "Login" }))
+        request.write(render_template('login.html', {'disp':False, 'is_user' : is_authorised(request), 'location' : '/login', 'title' : "Login" }))
     elif method == 'POST':
         username = request.get_field('username')
         password = request.get_field('password')
         user = User.get(username)
-        print("Loggin in: {}".format(user))
         if user is not None and password == user.password:
             request.set_secure_cookie('user_id', str(user.id))
-        request.redirect(r'/')
+            request.redirect(r'/login')
+        else:
+            request.write(render_template('login.html', {'disp':True, 'is_user' : is_authorised(request), 'location' : '/login', 'title' : "Login" }))
 
 def list_creation_handler(request):
     method = request.request.method
@@ -51,7 +52,8 @@ def list_creation_handler(request):
     user = User.get_by_id(int(request.get_secure_cookie('user_id')))
 
     if method == 'GET':
-        request.write(render_template('create.html', {'user' : user.name, 'is_user' : is_authorised(request), 'title' : 'Create A List'}))
+        user_list = user.get_lists()[0]
+        request.write(render_template('create.html', {'user' : user.name, 'is_user' : is_authorised(request), 'title' : 'Create A List', 'user_list': user_list.id}))
         # with open("not_instagram.html") as f:
         #     request.write(f.read())
         #     return
@@ -89,19 +91,26 @@ def list_display_handler(request, list_id):
         ls = List.get(int(list_id))
         if ls:
             user = User.get_by_id(ls.userid)
+            user_list = user.get_lists()[0]
             user2 = User.get_by_id(int(request.get_secure_cookie('user_id')))
             bucket = [a.id for a in ls.get_items()]
             items = {}
             for item in bucket:
                 items[item] = Item.get(item)
-            request.write(render_template('my_bucket_list.html', {'logged_in_username' : user2.name, 'bucket' : bucket, 'items':items, 'user' : user.name, 'is_user' : is_authorised(request), 'list_title' : ls.title, 'user_name' : user.name, 'list_id' : ls.id, 'title' : "{}\'s Bucket List\'".format(user.name)}))
+            request.write(render_template('my_bucket_list.html', {'logged_in_username' : user2.name, 'bucket' : bucket, 'items':items, 'user' : user.name, 'is_user' : is_authorised(request), 'list_title' : ls.title, 'user_name' : user.name, 'list_id' : ls.id, 'title' : "{}\'s Bucket List\'".format(user.name), 'user_list': user_list.id}))
         else:
             pass
             # TODO pass list doesnt exist
     elif method == 'POST':
         # TODO submit checkboxes to database
-
-        pass
+        ls = List.get(int(list_id))
+        for i in [a.id for a in ls.get_items()]:
+            checked = request.get_field("check{}".format(i))
+            item = Item.get(i)
+            item.completed = bool(checked)
+            item.update()
+        request.redirect(r'/list/{}'.format(list_id))
+        return
 
 def signup_handler(request):
     method = request.request.method
@@ -110,16 +119,14 @@ def signup_handler(request):
         return
 
     if method == 'GET':
-        request.write(render_template('signup.html', {'is_user' : is_authorised(request), 'location' : '/user/create', 'title' : "Sign Up" }))
+        request.write(render_template('signup.html', {'disp':False, 'is_user' : is_authorised(request), 'location' : '/user/create', 'title' : "Sign Up" }))
     elif method == 'POST':
         print("running post")
         username = request.get_field('username')
         password = request.get_field('password')
         repeat_password = request.get_field('repeat_password')
-        if password == repeat_password:
-            user = User.get(username)
-            if user is not None:
-                raise Exception("User already exists cant add account.")
+        user = User.get(username)
+        if user is None and password == repeat_password and len(password) > 1:
             user = User(username, password)
             print("creating user : {}".format(user))
             user.add()
@@ -130,7 +137,9 @@ def signup_handler(request):
             except:
                 print("Folder is already there stop being such a tryhard!")
             request.set_secure_cookie('user_id', str(user.id))
-        request.redirect(r'/')
+            request.redirect(r'/')
+        else:
+            request.write(render_template('signup.html', {'user_issue': user is not None, 'disp':True, 'is_user' : is_authorised(request), 'location' : '/user/create', 'title' : "Sign Up" }))
 
 def logout_handler(request):
     if not is_authorised(request):
