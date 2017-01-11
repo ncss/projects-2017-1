@@ -296,7 +296,19 @@ class User:
             return User(name, password, id)
         return None
 
-
+        '''
+        Get the bucket lists of a given user
+        '''
+        cur.execute('''
+                    SELECT title, userid, id, created
+                    FROM lists
+                    WHERE userid = ?;
+                    ''', (self.id,))
+        lists = []
+        for row in cur:
+            title, userid, id, created = row
+            lists.append(List(title, userid, id, created))
+        return lists
 
 
 if __name__ == "__main__":
