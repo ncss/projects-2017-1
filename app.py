@@ -72,7 +72,7 @@ def list_display_handler(request, list_id):
     method = request.request.method
     if method == 'GET':
         ls = List.get(int(list_id))
-        user = User.get_by_id(ls.uid)
+        user = User.get_by_id(ls.userid)
         request.write(render_template('my_bucket_list.html', {'is_user' : is_authorised(request), 'list_title' : ls.title, 'user_name' : user.name, 'list_id' : ls.id, 'title' : "{}\'s Bucket List\'".format(user.name)}))
     elif method == 'POST':
         # submit checkboxes to database
