@@ -68,10 +68,11 @@ def list_creation_handler(request):
                 item.image = head
                 head = head.split('.')[-1]
                 filename = 'static/img/list/{}/item{}.{}'.format(user.name, item.id, head)
+                item.image = '/'+filename
                 with open(filename, 'wb') as f:
                     f.write(body)
                 item.update()
-                request.redirect(r'/list/{}/'.format(item.list_id))
+                request.redirect(r'/list/{}'.format(item.list_id))
 
 def list_display_handler(request, list_id):
     method = request.request.method
