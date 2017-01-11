@@ -13,9 +13,9 @@ conn.row_factory = sqlite3.Row
 cur = conn.cursor()
 
 class List:
-    def __init__(self, title, uid, id=None, created=None):
+    def __init__(self, title, userid, id=None, created=None):
         self.title = title
-        self.uid = uid
+        self.userid = userid
         self.id = id
         self.created = created
 
@@ -29,7 +29,7 @@ class List:
         or bucket object invalid
         '''
         self.created = datetime.datetime.now()
-        cur.execute('INSERT INTO lists (userid, title, created) VALUES (?, ?, ?);', (self.uid, self.title, self.created))
+        cur.execute('INSERT INTO lists (userid, title, created) VALUES (?, ?, ?);', (self.userid, self.title, self.created))
         conn.commit()
         self.id = cur.lastrowid
 
@@ -41,7 +41,7 @@ class List:
                     UPDATE lists
                     SET title = ?, userid = ?
                     WHERE id = ?;
-                    ''', (self.title, self.uid, self.id))
+                    ''', (self.title, self.userid, self.id))
         conn.commit()
 
     def delete(self):
@@ -58,15 +58,15 @@ class List:
         search_keys = []
         search_values = []
 
-        search_options = ['id', 'userid', 'title']
+        search_options = ['id', 'userid', 'title', 'created']
 
-        for key, value in kwargs:
+        for key, value in kwargs.items():
             if value is not None and key in search_options:
                 search_keys.append(key + ' = ?')
                 search_values.append(value)
 
         cur.execute('''
-            SELECT title, userid, id
+            SELECT title, userid, id, created
             FROM lists
             WHERE {}
             '''.format(' AND '.join(search_keys)), tuple(search_values)
@@ -77,7 +77,7 @@ class List:
         return [List(*row) for row in rows]
 
     @staticmethod
-    def get(list_id):
+    def get(listid):
         '''
         Get the bucket data of a given user
         '''
@@ -85,11 +85,11 @@ class List:
                     SELECT title, userid, id, created
                     FROM lists
                     WHERE id = ?;
-                    ''', (list_id,))
+                    ''', (listid,))
         row = cur.fetchone()
         if row is not None:
-            title, uid, id, created = row
-            return List(title, uid, id, created)
+            title, userid, id, created = row
+            return List(title, userid, id, created)
         return None
 
     @staticmethod
@@ -104,8 +104,8 @@ class List:
                     ''', (user.id,))
         lists = []
         for row in cur:
-            title, uid, id, created = row
-            lists.append(List(title, uid, id, created))
+            title, userid, id, created = row
+            lists.append(List(title, userid, id, created))
         return lists
 
     def get_items(self):
@@ -191,16 +191,16 @@ class Item:
         search_keys = []
         search_values = []
 
-        search_options = ['id', 'list_id', 'text', 'rank', 'completed', 'image']
+        search_options = ['id', 'listid', 'text', 'completed', 'image']
 
-        for key, value in kwargs:
+        for key, value in kwargs.items():
             if value is not None and key in search_options:
                 search_keys.append(key + ' = ?')
                 search_values.append(value)
 
 
         cur.execute('''
-            SELECT id, list_id, text, rank, completed, image
+            SELECT listid, completed, text, image, id
             FROM items
             WHERE {}
             '''.format(' AND '.join(search_keys)), tuple(search_values)
@@ -208,7 +208,7 @@ class Item:
 
         rows = cur.fetchall()
 
-        return [List(*row) for row in rows]
+        return [Item(*row) for row in rows]
 
     def update(self):
         '''
@@ -262,20 +262,21 @@ class User:
                     ''', (self.password, self.id))
         conn.commit()
 
+    @staticmethod
     def search(**kwargs):
 
         search_keys = []
         search_values = []
 
-        search_options = ['username', 'password', 'id']
+        search_options = ['name', 'password', 'id']
 
-        for key, value in kwargs:
+        for key, value in kwargs.items():
             if value is not None and key in search_options:
                 search_keys.append(key + ' = ?')
                 search_values.append(value)
 
         cur.execute('''
-            SELECT from username, password, id
+            SELECT from name, password, id
             FROM users
             WHERE {}
             '''.format(' AND '.join(search_keys)), tuple(search_values)
@@ -283,7 +284,7 @@ class User:
 
         rows = cur.fetchall()
 
-        return [List(*row) for row in rows]
+        return [User(*row) for row in rows]
 
     def delete(self):
         '''
@@ -396,3 +397,18 @@ if __name__ == "__main__":
     i.delete()
     l.delete()
     u2.delete()
+
+
+    # Testing search methods
+    u = User('test', 'test')
+    u.add()
+    l = List('test', )
+    l.add()
+    i = Item(l.id, text='test')
+    i.add()
+    print(u)
+    print(l)
+    print(i)
+    print(User.search(name='test', passwd='test'))
+    print(List.search(title='test', userid='test'))
+    print(Item.search(list_id=4, text='test'))
