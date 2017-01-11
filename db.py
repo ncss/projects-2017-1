@@ -53,22 +53,26 @@ class List:
         conn.commit()
 
     @staticmethod
-    def search(id=None, user_id=None, title=None):
+    def search(**kwargs):
 
         search_key = ''
         search_value = ''
 
-        for key, value in **kwargs.items():
-            if value is not None:
+        search_options = ['id', 'userid', 'title']
+
+        for key, value in kwargs:
+
+            if value is not None and key in search_options:
                 search_key = key
                 search_value = value
 
         cur.execute('''
 
-        SELECT title, userid, id
-        FROM lists
-        WHERE {} = ?
-        '''.format(search_key), (search_value,))
+            SELECT title, userid, id
+            FROM lists
+            WHERE {} = ?
+            '''.format(search_key), (search_value,)
+        )
 
         rows = cur.fetchall()
 
