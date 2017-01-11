@@ -19,10 +19,15 @@
   {% if user == logged_in_username %}
   <a href="/list/create" class="upload-button">+</a>
   {% end if %}
-
   <button class="save-button" type="submit">
     &#10003;
   </button>
+  {% end if %}
+
+  <button class="back-button">
+  <a href="/">Back</a>
+  </button>
+
     <script src="../js/masonryfooter.js"></script>
 </form>
 </main>
