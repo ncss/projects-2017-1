@@ -32,6 +32,11 @@ e.g.  {% for user in users %} {{user}} exists {% end for %}
 
 !!!Can nest if-statements and for-statements (let Annie/Angela know if not working)
 
+How to change variable in context dictionary
+{% let variable = expression %}
+e.g.  {% let username = 'hocrux' %} {{ username }}
+this will then output username as hocrux 
+
 =====================TORNADO TEAM=======================================
 
 HOW TO IMPORT MODULE
