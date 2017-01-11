@@ -120,6 +120,21 @@ class List:
          items.append(Item(listid, completed, text, image, id))
      return items
 
+   def get_creation(self):
+       '''
+       Get bucket list by creation date
+       '''
+       cur.execute('''
+                   SELECT created, title, userid, id, 
+                   FROM lists
+                   WHERE created = ?;
+                   ''', (self.id,))
+       create = []
+       for row in cur:
+           title, userid, id, created = row
+           create.append(List(title, userid, id, created))
+       return create
+
 class Item:
     def __init__(self, list_id, completed=False, text=None, image=None, id=None):
         self.completed = completed
@@ -300,6 +315,7 @@ class User:
             return User(name, password, id)
         return None
 
+    def get_lists(self):
         '''
         Get the bucket lists of a given user
         '''
