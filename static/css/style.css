@@ -62,6 +62,9 @@ nav a:hover {
   color: rgb(81,81,81);
 }
 
+a {
+  text-decoration: none;
+}
 
 button , label {
   font-family: Comfortaa, 'sans-serif';
@@ -126,8 +129,8 @@ fieldset {
 }
 
 main.news-feed img  {
-  max-height: 100px;
-  max-width: 100px;
+  max-height: 250px;
+  max-width: 250px;
 }
 
 
