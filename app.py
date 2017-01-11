@@ -130,6 +130,9 @@ def logout_handler(request):
     request.clear_cookie('user_id')
     request.redirect(r'/')
 
+def error404_handler(request):
+    request.write(render_template('error404.html', { 'title' : "Error 404" }))
+
 # GET /list/create - Call create screen
 # POST /list/create - Post list to server and redirects to created list.
 # GET /list/<listID> - Shows list referring to listID or says list not found.
@@ -142,5 +145,6 @@ server.register(r'/list/create', list_creation_handler)
 server.register(r'/list/(\d+)', list_display_handler)
 server.register(r'/logout', logout_handler)
 server.register(r'/user/create', signup_handler)
+server.register(r'/.+', error404_handler)
 
 server.run()
