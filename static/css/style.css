@@ -66,7 +66,7 @@ a {
   text-decoration: none;
 }
 
-button , label {
+button , label, a.floating {
   font-family: Comfortaa, 'sans-serif';
   font-size: 20px;
   line-height: 31px;
@@ -101,7 +101,6 @@ button:hover {
   background-color: lightgrey; /*change to color of border*/
 }
 
-
 h1, h2, h3, h4, h5, h6 {
   font-family: Comfortaa;
 
@@ -128,7 +127,7 @@ fieldset {
 
 }
 
-main.news-feed img  {
+.news-feed img  {
   max-height: 250px;
   max-width: 250px;
 }
