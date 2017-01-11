@@ -135,6 +135,14 @@ class List:
             create.append(List(title, userid, id, created))
         return create
 
+    def new_item(self, text=None, image=None):
+        '''
+        Add a new item.
+        '''
+        i = Item(self.id, False, text, image)
+        i.add()
+        return i
+
 class Item:
     def __init__(self, list_id, completed=False, text=None, image=None, id=None):
         self.completed = completed
@@ -351,13 +359,23 @@ class User:
             lists.append(List(title, uid, id, created))
         return lists
 
+    def new_list(self, title):
+        '''
+        Add a new bucket list to the given user.
+        '''
+        l = List(title, self.id)
+        l.add()
+        return l
+
+
 
 if __name__ == "__main__":
     u2 = User('test1', 'testp')
     u2.add()
     u2.password = "windowsisBad123"
     u2.update()
-    l = List("test list for user test1", u2.id)
+    #l = List("test list for user test1", u2.id)
+    l = u2.new_list("test list for user test1")
     l.add()
     l.title += "HUZZAH"
     l.update()
