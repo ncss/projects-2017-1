@@ -41,6 +41,20 @@ cur.execute('''
 '''
 )
 
+cur.execute('''
+  CREATE TABLE comments (
+    id INTEGER NOT NULL,
+    listid INTEGER NOT NULL,
+    author INTEGER NOT NULL,
+    comment TEXT NOT NULL,
+    created TIMESTAMP NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (listid) REFERENCES lists(id) ON DELETE CASCADE,
+    FOREIGN KEY (author) REFERENCES users(id) ON DELETE CASCADE
+);
+'''
+)
+
 cur.execute("INSERT INTO users VALUES (0, 'Isaac', 'password');")
 cur.execute("INSERT INTO users VALUES (1, 'mitchell', 'hello');")
 cur.execute("INSERT INTO users VALUES (2, 'Name2', 'word2');")
@@ -58,5 +72,11 @@ cur.execute("INSERT INTO items VALUES (0, 0, 'Word1', NULL, 0 );")
 cur.execute("INSERT INTO items VALUES (1, 1, 'Word2', NULL, 1 );")
 cur.execute("INSERT INTO items VALUES (2, 2, 'Word3', NULL, 0 );")
 cur.execute("INSERT INTO items VALUES (3, 3, 'Word4', NULL, 1 );")
+
+
+cur.execute("INSERT INTO comments VALUES (0, 0, 0, 'Comment', ?)" (now,))
+cur.execute("INSERT INTO comments VALUES (1, 1, 1, 'Comment1', ?)" (now,))
+cur.execute("INSERT INTO comments VALUES (2, 2, 2, 'Comment2', ?)" (now,))
+cur.execute("INSERT INTO comments VALUES (3, 3, 3, 'Comment3', ?)" (now,))
 
 conn.commit()
