@@ -17,11 +17,11 @@ def index_handler(request):
     if cookie == None:
         request.write(render_template('homepage.html', {'is_user' : is_authorised(request), 'title' : "Home Page"}))
     else:
-
         user = User.get_by_id(int(cookie))
         names = user.get_newsfeed()
         names = [user.get_by_id(a.userid).name for a in names]
-        request.write(render_template('news-feed.html', {'names':names, 'is_user' : is_authorised(request), 'title' : 'News Feed', 'user' : user.name}))
+
+        request.write(render_template('news-feed.html', {'list_id': user.get_lists()[0].id, 'names':names, 'is_user' : is_authorised(request), 'title' : 'News Feed', 'user' : user.name}))
 
 
 def login_handler(request):
@@ -36,7 +36,7 @@ def login_handler(request):
         username = request.get_field('username')
         password = request.get_field('password')
         user = User.get(username)
-        print("Loggin in: {}".format(user))
+        print("Logging in: {}".format(user))
         if user is not None and password == user.password:
             request.set_secure_cookie('user_id', str(user.id))
         request.redirect(r'/login')
@@ -59,15 +59,20 @@ def list_creation_handler(request):
         ##Get the User
         user = User.get_by_id(int(request.get_secure_cookie('user_id')))
         #Get a new Item object
-        item = Item(List.get_user_lists(user)[0].id, text=textdesc)
-        if im != '':
-            print(im)
-            item.image = im
-            *rubbish, body = request.get_file('image')
-            filename = 'static/img/list/{}/item{}.{}'.format(user.name, item.id, im.split('.')[-1])
-            with open(filename, 'wb') as f:
-                print(filename)
-                f.write(body)
+
+        ls = List.get_user_lists(user)
+        if ls:
+            item = Item(ls[0].id, text=textdesc)
+            item.add()
+            head, contype, body = request.get_file('file_upload')
+            if head != '':
+                head = head.split('.')[-1]
+                filename = 'static/img/list/{}/item{}.{}'.format(user.name, item.id, head)
+                item.image = '../../'+filename
+                with open(filename, 'wb') as f:
+                    f.write(body)
+                item.update()
+                request.redirect(r'/list/{}'.format(item.list_id))
 
 def list_display_handler(request, list_id):
     method = request.request.method
