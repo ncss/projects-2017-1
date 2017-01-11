@@ -18,13 +18,17 @@
 
   {% if user == logged_in_username %}
   <button class="add-button">
-  <a href="/list/create">Add</a>
+  <a href="/list/create">Add Item</a>
   </button>
-  {% end if %}
-
   <button class="save-button" type="submit">
   Save
   </button>
+  {% end if %}
+
+  <button class="back-button">
+  <a href="/">Back</a>
+  </button>
+
     <script src="../js/masonryfooter.js"></script>
 </form>
 </main>
