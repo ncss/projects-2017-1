@@ -59,13 +59,13 @@ def list_creation_handler(request):
         textdesc = request.get_field('description')
         ##Get the User
         user = User.get_by_id(int(request.get_secure_cookie('user_id')))
+        head, contype, body = request.get_file('file_upload')
         #Get a new Item object
         ls = List.get_user_lists(user)
-        if ls:
+        if ls and (head or textdesc):
             item = Item(ls[0].id, text=textdesc)
             item.add()
-            head, contype, body = request.get_file('file_upload')
-            if head != '':
+            if head:
                 item.image = head
                 head = head.split('.')[-1]
                 filename = 'static/img/list/{}/item{}.{}'.format(user.name, item.id, head)
@@ -74,24 +74,33 @@ def list_creation_handler(request):
                     f.write(body)
                 item.update()
                 request.redirect(r'/list/{}'.format(item.list_id))
+        else:
+            pass
+            #TODO handle invalid item input here
 
 def list_display_handler(request, list_id):
     method = request.request.method
+
+    if not is_authorised(request):
+        request.redirect(r'/')
+        return
+
     if method == 'GET':
         ls = List.get(int(list_id))
         if ls:
             user = User.get_by_id(ls.userid)
+            user2 = User.get_by_id(int(request.get_secure_cookie('user_id')))
             bucket = [a.id for a in ls.get_items()]
             items = {}
             for item in bucket:
                 items[item] = Item.get(item)
-            print(items)
-            request.write(render_template('my_bucket_list.html', {'bucket' : bucket, 'items':items, 'user' : user.name, 'is_user' : is_authorised(request), 'list_title' : ls.title, 'user_name' : user.name, 'list_id' : ls.id, 'title' : "{}\'s Bucket List\'".format(user.name)}))
+            request.write(render_template('my_bucket_list.html', {'logged_in_username' : user2.name, 'bucket' : bucket, 'items':items, 'user' : user.name, 'is_user' : is_authorised(request), 'list_title' : ls.title, 'user_name' : user.name, 'list_id' : ls.id, 'title' : "{}\'s Bucket List\'".format(user.name)}))
         else:
             pass
             # TODO pass list doesnt exist
     elif method == 'POST':
-        # submit checkboxes to database
+        # TODO submit checkboxes to database
+
         pass
 
 def signup_handler(request):
