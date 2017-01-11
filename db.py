@@ -254,24 +254,24 @@ class User:
                     ''', (self.password, self.id))
         conn.commit()
 
-    def search(self, username=None, id=None):
+    def search(**kwargs):
 
-        search_key = ''
-        search_value = ''
-        # Does kwargs need to be defined?
-        '''
-        for key,value in **kwargs.items():
-            if value is not None:
-                search_key = key
-                search_value = value
-        '''
+        search_keys = []
+        search_values = []
+
+        search_options = ['username', 'password', 'id']
+
+        for key, value in kwargs:
+            if value is not None and key in search_options:
+                search_keys.append(key + ' = ?')
+                search_values.append(value)
 
         cur.execute('''
-
-        SELECT from username, password, id
-        FROM users
-        WHERE {} = ?
-        '''.format(search_key), (search_value,))
+            SELECT from username, password, id
+            FROM users
+            WHERE {}
+            '''.format(' AND '.join(search_keys)), tuple(search_values)
+        )
 
         rows = cur.fetchall()
 
