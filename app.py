@@ -17,11 +17,12 @@ def index_handler(request):
     if cookie == None:
         request.write(render_template('homepage.html', {'is_user' : is_authorised(request), 'title' : "Home Page"}))
     else:
-
         user = User.get_by_id(int(cookie))
+        ls = List.get_user_lists(user)
+        print(ls)
         names = user.get_newsfeed()
         names = [user.get_by_id(a.userid).name for a in names]
-        request.write(render_template('news-feed.html', {'user_id': user.id, 'names':names, 'is_user' : is_authorised(request), 'title' : 'News Feed', 'user' : user.name}))
+        request.write(render_template('news-feed.html', {'list_id': ls[0].id, 'user_id': user.id, 'names':names, 'is_user' : is_authorised(request), 'title' : 'News Feed', 'user' : user.name}))
 
 
 def login_handler(request):

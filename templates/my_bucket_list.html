@@ -2,7 +2,7 @@
 
 {% include header.html %}
 
-<main>
+<main class="bucket-list">
   <h1>
   My Tick It List
 </h1>
@@ -13,10 +13,13 @@
     {{items[item].text}}
   </p>
   {% end for%}
-  
-  <button class="save-button" type="submit">
-  Save
-  </button>
+
+
+
+<div class="buttons-container">
+<a href="/list/{{ list_id }}"> EDIT </a>
+</div>
+
     <script src="../js/masonryfooter.js"></script>
 </form>
 </main>
