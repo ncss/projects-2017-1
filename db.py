@@ -310,6 +310,20 @@ class User:
             lists.append(List(title, userid, id, created))
         return lists
 
+    def get_newsfeed(self):
+        '''
+        Gets the items for newsfeed (lists other than active user)
+        '''
+        cur.execute('''SELECT title, userid, id, created
+                    FROM lists
+                    WHERE userid != ?
+                    ''', (self.id,))
+        lists = []
+        for row in cur:
+            title, uid, id, created = row
+            lists.append(List(title, uid, id, created))
+        return lists
+
 
 if __name__ == "__main__":
     u2 = User('test1', 'testp')
