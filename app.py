@@ -40,7 +40,7 @@ def login_handler(request):
         print("Loggin in: {}".format(user))
         if user is not None and password == user.password:
             request.set_secure_cookie('user_id', str(user.id))
-        request.redirect(r'/')
+        request.redirect(r'/login')
 
 def list_creation_handler(request):
     method = request.request.method
