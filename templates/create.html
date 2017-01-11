@@ -2,20 +2,12 @@
 
 {% include header.html %}
 
-<head>
-  <link rel="stylesheet" type="text/css" href="/static/css/style.css">
-  <link href="http://fonts.googleapis.com/css?family=Comfortaa|Permanent+Marker|Roboto+Slab|Ruslan+Display" rel="stylesheet">
 
-</head>
-
-<main>
-  <form action="/list/create" method="post">
-    <button class="upload">
-      Upload
-    </button>
-    <br>
-    <input type="file" name="upload" placeholder="UPLOAD">
-    <input type="text" name="description" placeholder="Description" size="80" height="100">
+<main class="create">
+  <form action="/list/create" method="post" enctype="multipart/form-data">
+    <input type="file" name="file_upload" id="file_upload" class="uploadfile" >
+    <label for="file_upload"> Choose photo </label>
+    <textarea placeholder="Description"></textarea>
     <button class="save">
       Save
     </button>
