@@ -39,7 +39,7 @@ def login_handler(request):
         print("Loggin in: {}".format(user))
         if user is not None and password == user.password:
             request.set_secure_cookie('user_id', str(user.id))
-        request.redirect(r'/')
+        request.redirect(r'/login')
 
 def list_creation_handler(request):
     method = request.request.method
@@ -48,12 +48,12 @@ def list_creation_handler(request):
         return
 
     if method == 'GET':
-        request.write(render_template('create.html', {'is_user' : is_authorised(request), 'title' : 'Create A List'}))
+        user = User.get_by_id(request.get_secure_cookie('user_id'))
+        request.write(render_template('create.html', {'user': user, 'is_user' : is_authorised(request), 'title' : 'Create A List'}))
         # with open("not_instagram.html") as f:
         #     request.write(f.read())
         #     return
     elif method == 'POST':
-        user = User.get_by_id(request.get_secure_cookie('user_id'))
         textdesc = request.get_field('description')
         im = request.get_field('image')
         ##Get the User
