@@ -30,13 +30,11 @@
 
 <body>
   <main>
-    <form action="/list/create" method="post">
-      <button class="upload">
-        Upload
-      </button>
+    <form action="/list/create" method="post" enctype="multipart/form-data">
+      <input type="file" name="image" accept="image/*">
       <br>
-      <textarea name="description" width=100 > Description </textarea>
-      <button class="save">
+      <textarea name="description" width=100 ></textarea>
+      <button class="save" type="submit">
         Save
       </button>
     </form>
