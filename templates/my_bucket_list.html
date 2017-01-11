@@ -1,13 +1,10 @@
 <!DOCTYPE html>
-
 {% include header.html %}
-
-<main class="bucket-list">
-  <h1>
-  {{user}}'s Tick It List
-</h1>
-<form action="/list/{{ list_id }}" method="post">
-
+<main id="list-main">
+    <h1>
+    {{user}}'s Tick It List
+  </h1>
+  <form action="/list/{{ list_id }}" method="post">
   {% for item in bucket %}
     {% if user == logged_in_username %}
       <input type="checkbox" name="check{{ item }}" id="check{{ item }}"
