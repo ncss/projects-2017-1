@@ -56,28 +56,36 @@ def list_creation_handler(request):
         #     return
     elif method == 'POST':
         textdesc = request.get_field('description')
-        im = request.get_field('upload')
         ##Get the User
         user = User.get_by_id(int(request.get_secure_cookie('user_id')))
         #Get a new Item object
         item = Item(List.get_user_lists(user)[0].id, text=textdesc)
-        if im != '':
-            item.image = im
-            im = im.split('.')[-1]
-            *rubbish, body = request.get_file('upload')
-            print(body)
-            print(rubbish)
-            filename = 'static/img/list/{}/item{}.{}'.format(user.name, item.id, im)
+        item.add()
+        head, contype, body = request.get_file('file_upload')
+        if head != '':
+            item.image = head
+            head = head.split('.')[-1]
+            filename = 'static/img/list/{}/item{}.{}'.format(user.name, item.id, head)
             with open(filename, 'wb') as f:
-                print(filename)
                 f.write(body)
+            item.update()
+            request.redirect(r'/list/{}/'.format(item.list_id))
 
 def list_display_handler(request, list_id):
     method = request.request.method
     if method == 'GET':
         ls = List.get(int(list_id))
-        user = User.get_by_id(ls.uid)
-        request.write(render_template('my_bucket_list.html', {'is_user' : is_authorised(request), 'list_title' : ls.title, 'user_name' : user.name, 'list_id' : ls.id, 'title' : "{}\'s Bucket List\'".format(user.name)}))
+        if ls:
+            user = User.get_by_id(ls.uid)
+            bucket = [a.id for a in ls.get_items()]
+            items = {}
+            for item in bucket:
+                items[item] = Item.get(item)
+            print(items)
+            request.write(render_template('my_bucket_list.html', {'user' : user.name, 'is_user' : is_authorised(request), 'list_title' : ls.title, 'user_name' : user.name, 'list_id' : ls.id, 'title' : "{}\'s Bucket List\'".format(user.name)}))
+        else:
+            pass
+            # TODO pass list doesnt exist
     elif method == 'POST':
         # submit checkboxes to database
         pass
