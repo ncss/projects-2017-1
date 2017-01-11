@@ -2,13 +2,19 @@
 
 {% include header.html %}
 
+<head>
+  <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+  <link href="http://fonts.googleapis.com/css?family=Comfortaa|Permanent+Marker|Roboto+Slab|Ruslan+Display" rel="stylesheet">
+
+</head>
+
 <main>
   <form action="/list/create" method="post">
     <button class="upload">
       Upload
     </button>
     <br>
-    <input type="text" name="description" placeholder="Description" size="80">
+    <input type="text" name="description" placeholder="Description" size="80" height="100">
     <button class="save">
       Save
     </button>
