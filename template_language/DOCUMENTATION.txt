@@ -35,9 +35,16 @@ e.g.  {% for user in users %} {{user}} exists {% end for %}
 
 !!!Can nest if-statements and for-statements (let Annie/Angela know if not working)
 
+<<<<<<< HEAD
 How to have comments
 {% comment %} comment text {% end comment %}
 e.g.  {% comment %} this section sets the username {% end comment %}
+=======
+How to change variable in context dictionary
+{% let variable = expression %}
+e.g.  {% let username = 'hocrux' %} {{ username }}
+this will then output username as hocrux 
+>>>>>>> origin/template-language
 
 =====================TORNADO TEAM=======================================
 

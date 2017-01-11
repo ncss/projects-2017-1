@@ -72,6 +72,14 @@ class Parser:
                     node = p.parse()
                     parent.children.append(node)
 
+                if tag == 'let':
+                    group_node = GroupNode()
+                    match = re.match(r'^\s*(\S+)\s*=\s*(.*)$', argument)
+                    variable = match.group(1)
+                    expression = match.group(2)
+                    assignment_node = AssignmentNode(variable, expression)
+                    parent.children.append(assignment_node)
+
                 if tag == 'if':
                     group_node = GroupNode()
                     node = IfNode(argument, group_node)
@@ -154,6 +162,16 @@ class ExpressionNode(Node): #after {{ --> treat as Python expression
             return str(eval(safe.group(1), {}, context))
         else:
             return html.escape(str(eval(self.expression, {}, context)))
+
+class AssignmentNode(Node):
+    def __init__(self, variable, expression):
+        super(AssignmentNode, self).__init__()
+        self.variable = variable
+        self.expression = expression
+
+    def render(self, context):
+        context[self.variable] = eval(self.expression) #dictionary index with key
+        return ''
 
 class ForNode(Node):
     def __init__(self, variable, expression, group_node):
