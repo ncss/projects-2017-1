@@ -112,7 +112,17 @@ main, .login-section form, .login-section input {
   position: relative;
   margin: auto;
   margin-bottom: 5px;
+}
 
+.login-section {
+  position: absolute;
+  top: 50%;
+  bottom: 50%;
+  margin-top: -300px;
+  margin-left: 95px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .login-section input{
