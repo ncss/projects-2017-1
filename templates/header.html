@@ -9,13 +9,14 @@
 </head>
 
 <header>
+  <a href ="/">
     <img src="/static/img/whitetickit_logo_only.png" alt="Tick It LOGO" width=80 height=80>
     <h1>
       Tick It
 
       {% if is_user %}
         , {{ user }}
-        </h1>
+      </h1></a>
         <nav>
         <a href="/logout">
           Sign Out
@@ -23,7 +24,7 @@
       {% end if %}
 
       {% if not is_user %}
-        </h1>
+    </h1></a>
         <nav>
         <a href="/login">
           Log In

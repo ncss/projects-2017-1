@@ -45,6 +45,8 @@ cur.execute("INSERT INTO users VALUES (0, 'Isaac', 'password');")
 cur.execute("INSERT INTO users VALUES (1, 'mitchell', 'hello');")
 cur.execute("INSERT INTO users VALUES (2, 'Name2', 'word2');")
 cur.execute("INSERT INTO users VALUES (3, 'Name3', 'word3');")
+cur.execute("INSERT INTO users VALUES (4, 'test', 'test');")
+cur.execute("INSERT INTO users VALUES (5, 'a', 'a');")
 
 now = datetime.datetime.now()
 cur.execute("INSERT INTO lists VALUES (0, 0, 'listtittle', ?);", (now,))
