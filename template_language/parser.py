@@ -168,8 +168,10 @@ class IfNode(Node):
         self.group_node = group_node
 
     def render(self, context):
-        if eval(self.predicate):
-            return self.group_node.render(context)
+        if eval(self.predicate, {}, context):
+            result = self.group_node.render(context)
+            return result
+        return ""
 
 if __name__ == '__main__':
     TEMPLATES_PATH = 'template_language\\test_templates'

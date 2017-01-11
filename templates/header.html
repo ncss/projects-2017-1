@@ -4,26 +4,29 @@
   <script src="static/js/masonry.pkgd.min.js"></script>
   <script src="static/js/masonryfooter.js"></script>
   <title>
-    {{title}}
+    {{ title }}
   </title>
 </head>
 
 <header>
-    <img src="/static/img/tickit_logo_only.png" alt="Tick It LOGO" width=80 height=80>
+    <img src="/static/img/whitetickit_logo_only.png" alt="Tick It LOGO" width=80 height=80>
+    <h1> Tick It </h1>
+
+
   <nav>
-    {% if user_logged_in %}
+    {% if is_user %}
     <span>{{ user }}</span>
     <a href="/">
       Sign Out
     </a>
     {% end if %}
-    {% if not user_logged_in %}
+    {% if not is_user %}
       <a href="/login">
         Log In
       </a>
       <a href="/user/create" >
         Sign Up
       </a>
-    {% end if not%}
+    {% end if %}
   </nav>
 </header>
