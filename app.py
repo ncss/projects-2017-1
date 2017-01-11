@@ -40,7 +40,7 @@ def login_handler(request):
         print("Loggin in: {}".format(user))
         if user is not None and password == user.password:
             request.set_secure_cookie('user_id', str(user.id))
-        request.redirect(r'/')
+        request.redirect(r'/login')
 
 def list_creation_handler(request):
     method = request.request.method
@@ -118,16 +118,14 @@ def signup_handler(request):
         return
 
     if method == 'GET':
-        request.write(render_template('signup.html', {'is_user' : is_authorised(request), 'location' : '/user/create', 'title' : "Sign Up" }))
+        request.write(render_template('signup.html', {'disp':False, 'is_user' : is_authorised(request), 'location' : '/user/create', 'title' : "Sign Up" }))
     elif method == 'POST':
         print("running post")
         username = request.get_field('username')
         password = request.get_field('password')
         repeat_password = request.get_field('repeat_password')
-        if password == repeat_password and len(password) > 1:
-            user = User.get(username)
-            if user is not None:
-                raise Exception("User already exists cant add account.")
+        user = User.get(username)
+        if user is None and password == repeat_password and len(password) > 1:
             user = User(username, password)
             print("creating user : {}".format(user))
             user.add()
@@ -138,7 +136,9 @@ def signup_handler(request):
             except:
                 print("Folder is already there stop being such a tryhard!")
             request.set_secure_cookie('user_id', str(user.id))
-        request.redirect(r'/')
+            request.redirect(r'/')
+        else:
+            request.write(render_template('signup.html', {'user_issue': user is not None, 'disp':True, 'is_user' : is_authorised(request), 'location' : '/user/create', 'title' : "Sign Up" }))
 
 def logout_handler(request):
     if not is_authorised(request):
