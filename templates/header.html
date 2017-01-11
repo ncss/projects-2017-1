@@ -4,7 +4,7 @@
   <script src="static/js/masonry.pkgd.min.js"></script>
   <script src="static/js/masonryfooter.js"></script>
   <title>
-    {{title}}
+    {{ title }}
   </title>
 </head>
 
@@ -20,13 +20,13 @@
       Sign Out
     </a>
     {% end if %}
-    {% if not user_logged_in %}
+    {% if not is_user %}
       <a href="/login">
         Log In
       </a>
       <a href="/user/create" >
         Sign Up
       </a>
-    {% end if not%}
+    {% end if %}
   </nav>
 </header>
