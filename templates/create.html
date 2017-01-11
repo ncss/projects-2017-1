@@ -2,19 +2,15 @@
 
 {% include header.html %}
 
-<main>
-  <body>
+
+<main class="create">
   <form action="/list/create" method="#">
-    <button class="upload" position="absolute" top="0" left="0" padding="0px 0px">
-      Upload
-    </button>
-  </form>
-    <br>
-    <input type="text" name="description" placeholder="Description" size="60" height="300">
-    <form action="/list/create" method="post">
-    <button class="save" horizontal-align="right" margins="0px">
+    <input type="file" name="file_upload" id="file_upload" class="uploadfile" >
+    <label for="file_upload"> Choose photo </label>
+    <textarea placeholder="Description"></textarea>
+    <button class="save">
       Save
     </button>
   </form>
-</body>
+
 </main>
