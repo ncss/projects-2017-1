@@ -65,6 +65,9 @@ class List:
                 search_keys.append(key + ' = ?')
                 search_values.append(value)
 
+        if search_keys == [] or search_values == []:
+            return "Invalid search"
+
         cur.execute('''
             SELECT title, userid, id, created
             FROM lists
@@ -198,6 +201,8 @@ class Item:
                 search_keys.append(key + ' = ?')
                 search_values.append(value)
 
+        if search_keys == [] or search_values == []:
+            return "Invalid search"
 
         cur.execute('''
             SELECT listid, completed, text, image, id
@@ -268,19 +273,20 @@ class User:
         search_keys = []
         search_values = []
 
-        search_options = ['name', 'password', 'id']
-
+        search_options = ['username', 'password', 'id']
         for key, value in kwargs.items():
             if value is not None and key in search_options:
-                search_keys.append(key + ' = ?')
+                search_keys.append(key + '=?')
                 search_values.append(value)
 
+        if search_keys == [] or search_values == []:
+            return "Invalid search"
+
         cur.execute('''
-            SELECT from name, password, id
+            SELECT username, password, id
             FROM users
             WHERE {}
-            '''.format(' AND '.join(search_keys)), tuple(search_values)
-        )
+            '''.format(' AND '.join(search_keys)), tuple(search_values))
 
         rows = cur.fetchall()
 
@@ -400,7 +406,7 @@ if __name__ == "__main__":
 
 
     # Testing search methods
-    u = User('test', 'test')
+    '''u = User('test', 'test')
     u.add()
     l = List('test', )
     l.add()
@@ -408,7 +414,8 @@ if __name__ == "__main__":
     i.add()
     print(u)
     print(l)
-    print(i)
-    print(User.search(name='test', passwd='test'))
+    print(i)'''
+    print(User.search(username='test', password='test'))
     print(List.search(title='test', userid='test'))
-    print(Item.search(list_id=4, text='test'))
+    print(Item.search(listid=4, text='test'))
+    User.delete()
