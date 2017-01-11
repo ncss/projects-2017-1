@@ -45,24 +45,27 @@ def list_creation_handler(request):
         request.redirect(r'/login')
         return
 
+    user = User.get_by_id(int(request.get_secure_cookie('user_id')))
+
     if method == 'GET':
-        request.write(render_template('create.html', {'is_user' : is_authorised(request), 'title' : 'Create A List'}))
+        request.write(render_template('create.html', {'user' : user.name, 'is_user' : is_authorised(request), 'title' : 'Create A List'}))
         # with open("not_instagram.html") as f:
         #     request.write(f.read())
         #     return
     elif method == 'POST':
-        user = User.get_by_id(request.get_secure_cookie('user_id'))
         textdesc = request.get_field('description')
-        im = request.get_field('image')
+        im = request.get_field('upload')
         ##Get the User
         user = User.get_by_id(int(request.get_secure_cookie('user_id')))
         #Get a new Item object
         item = Item(List.get_user_lists(user)[0].id, text=textdesc)
         if im != '':
-            print(im)
             item.image = im
-            *rubbish, body = request.get_file('image')
-            filename = 'static/img/list/{}/item{}.{}'.format(user.name, item.id, im.split('.')[-1])
+            im = im.split('.')[-1]
+            *rubbish, body = request.get_file('upload')
+            print(body)
+            print(rubbish)
+            filename = 'static/img/list/{}/item{}.{}'.format(user.name, item.id, im)
             with open(filename, 'wb') as f:
                 print(filename)
                 f.write(body)
@@ -84,7 +87,7 @@ def signup_handler(request):
         return
 
     if method == 'GET':
-        request.write(render_template('login.html', {'is_user' : is_authorised(request), 'location' : '/user/create', 'title' : "Sign Up" }))
+        request.write(render_template('signup.html', {'is_user' : is_authorised(request), 'location' : '/user/create', 'title' : "Sign Up" }))
     elif method == 'POST':
         print("running post")
         username = request.get_field('username')
@@ -97,7 +100,12 @@ def signup_handler(request):
             user = User(username, password)
             print("creating user : {}".format(user))
             user.add()
-            os.mkdir('static/img/list/{}/'.format(user.name))
+            l = List("", user.id)
+            l.add()
+            try:
+                os.makedirs('static/img/list/{}'.format(user.name))
+            except:
+                print("Folder is already there stop being such a tryhard!")
             request.set_secure_cookie('user_id', str(user.id))
         request.redirect(r'/')
 
