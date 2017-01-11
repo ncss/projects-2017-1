@@ -177,25 +177,26 @@ class Item:
             return Item(list_id, completed, text, image, item_id)
         return None
 
-    def search(self, id=None, list_id=None, text=None, rank=None, completed=None, image=None):
+    @staticmethod
+    def search(**kwargs):
 
-        search_key = ''
-        search_value = ''
+        search_keys = []
+        search_values = []
 
-        '''
-        for key, value in **kwargs.items():
-            if value is not None:
-                search_key = key
-                search_value = value
+        search_options = ['id', 'list_id', 'text', 'rank', 'completed', 'image']
 
-        '''
+        for key, value in kwargs:
+            if value is not None and key in search_options:
+                search_keys.append(key + ' = ?')
+                search_values.append(value)
+
 
         cur.execute('''
-
-        SELECT id, list_id, text, rank, completed, image
-        FROM items
-        WHERE {} = ?
-        '''.format(search_key), (search_value,))
+            SELECT id, list_id, text, rank, completed, image
+            FROM items
+            WHERE {}
+            '''.format(' AND '.join(search_keys)), tuple(search_values)
+        )
 
         rows = cur.fetchall()
 
