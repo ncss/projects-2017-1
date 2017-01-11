@@ -134,6 +134,59 @@ button.floating {
   padding: 10px 15px;
 }
 
+.upload-button, .save-button {
+  font-family: Comfortaa, 'sans-serif';
+  border-radius: 50%;
+  position: fixed;
+  font-size: 50px;
+  background-color: rgba(81, 81, 81, 0.27);
+  color: white;
+  border-color: transparent;
+  box-shadow: 2px 2px 2px rgba(81, 81, 81, 0.5);
+}
+
+.upload-button {
+  font-size: 40px;
+  bottom: 40px;
+  right: 50px;
+  padding: 0 13px;
+}
+
+.save-button {
+  font-size: 30px;
+  bottom: 20px;
+  right: 120px;
+  padding: 10px 15px;
+}
+
+.upload-button:hover, .save-button:hover {
+  background-color: rgba(81, 81, 81, 0.57);
+}
+
+#list-main figure {
+  display: inline-block;
+}
+
+#list-main input[type=checkbox] {
+  display:none;
+}
+
+#list-main .item {
+  opacity: 0.7
+}
+
+#list-main input:checked + .item {
+  opacity: 1;
+}
+
+#list-main .item:hover figcaption {
+  display: block;
+}
+
+#list-main input + .item figcaption {
+  display: none;
+}
+
 .upload-button:hover, .save-button:hover {
   background-color: rgba(81, 81, 81, 0.57);
 }
