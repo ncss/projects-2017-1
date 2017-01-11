@@ -5,6 +5,9 @@
   <main class="login-section">
     <form action="/login" method="post">
           <img src="/static/img/tickit_logo_only.png" alt="Tick It LOGO">
+            {% if disp %}
+            <p style="color:red">Wrong Username/Password!</p>
+            {% end if %}
           <input type="text" name="username" placeholder="Username">
           <input type="password" name="password" placeholder="Password">
           <button class="login-button">LOGIN</button>

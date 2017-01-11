@@ -32,15 +32,16 @@ def login_handler(request):
         return
 
     if method == 'GET':
-        request.write(render_template('login.html', {'is_user' : is_authorised(request), 'location' : '/login', 'title' : "Login" }))
+        request.write(render_template('login.html', {'disp':False, 'is_user' : is_authorised(request), 'location' : '/login', 'title' : "Login" }))
     elif method == 'POST':
         username = request.get_field('username')
         password = request.get_field('password')
         user = User.get(username)
-        print("Loggin in: {}".format(user))
         if user is not None and password == user.password:
             request.set_secure_cookie('user_id', str(user.id))
-        request.redirect(r'/login')
+            request.redirect(r'/login')
+        else:
+            request.write(render_template('login.html', {'disp':True, 'is_user' : is_authorised(request), 'location' : '/login', 'title' : "Login" }))
 
 def list_creation_handler(request):
     method = request.request.method
