@@ -11,8 +11,12 @@
       {% if items[item].completed %}checked{% end if %}>
     {% end if %}
     <label for="check{{ item }}" class="item">
-      <img src="{{ items[item].image }}" alt="item">
-      {{ items[item].text }}
+      <figure>
+        <img src="{{ items[item].image }}" alt="item">
+        {% if items[item].text != "" %}
+          <figcaption>{{ items[item].text }}</figcaption>
+        {% end if %}
+      </figure>
     </label>
   {% end for %}
 

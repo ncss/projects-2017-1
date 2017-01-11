@@ -25,7 +25,6 @@ header img, header h1 {
 header {
   background-color: rgba(81, 81, 81, 0.27);
   position: fixed;
-  margin-top: 0px;
   width: 100%;
 
 }
@@ -34,22 +33,6 @@ main {
   width: 90%;
   margin: auto;
   text-align: center;
-}
-
-.photo-container:hover img {
-  opacity: 0.2;
-
-}
-.photo-container:hover p {
-  display: block;
-  text-align: center;
-  position: absolute;
-  bottom: 15px;
-  right: 25px;
-}
-
-.photo-container p {
-  display: none;
 }
 
 textarea {
@@ -138,16 +121,28 @@ button.floating {
   background-color: rgba(81, 81, 81, 0.57);
 }
 
-.bucket-list input[type=checkbox] {
+#list-main figure {
+  display: inline-block;
+}
+
+#list-main input[type=checkbox] {
   display:none;
 }
 
-.bucket-list .item * {
+#list-main .item {
   opacity: 0.7
 }
 
-.bucket-list input:checked + .item {
-  background-color: gray;
+#list-main input:checked + .item {
+  opacity: 1;
+}
+
+#list-main .item:hover figcaption {
+  display: block;
+}
+
+#list-main input + .item figcaption {
+  display: none;
 }
 
 button:hover {
@@ -182,6 +177,11 @@ fieldset {
 
 }
 
+section.news-feed img  {
+  max-height: 250px;
+  max-width: 250px;
+}
+
 
 input {
   display: block;
@@ -194,7 +194,7 @@ main, .login-section form, .login-section input {
   margin-bottom: 5px;
 }
 
-.login-section , .create{
+.login-section , .create , .list_bucketx{
   position: absolute;
   top: 50%;
   bottom: 50%;
@@ -203,10 +203,6 @@ main, .login-section form, .login-section input {
   display: flex;
   flex-direction: column;
   justify-content: center;
-}
-
-form img {
-  padding-bottom: 15px;
 }
 
 .login-section input {
@@ -257,12 +253,13 @@ form img {
 }
 
 /* Homepage */
+
 main {
   padding-top: 150px;
   top: 100px;
 }
 
-main.bucket-list {
+main#list-main {
   position: absolute;
   top: 100px;
   left: 90px;
@@ -291,7 +288,7 @@ main.create {
   display: inline-block;
 }
 
-main.bucket-list {
+main#list-main {
   position: absolute;
   top: 100px;
   padding: 0px;
@@ -308,29 +305,4 @@ main.bucket-list {
   font-size: 30px;
   color: black;
   text-align: center;
-}
-
-.photo-container {
-  float: left;
-  position: relative;
-  overflow: hidden;
-}
-
-.image-thumb {
-  position: relative;
-  background-color: #eee;
-}
-
-.news-feed {
-  position: relative;
-  width: 960px;
-  margin: 0px auto;
-}
-
-#list-main {
-  padding-top: 145px;
-}
-
-#list-main h1 {
-  margin-top: 0px;
 }
