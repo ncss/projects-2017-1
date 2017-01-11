@@ -20,6 +20,19 @@ e.g.  {{ username }}
 e.g.  {{ username.upper() }}
 e.g.  {{ 1 + 1 }}
 
+How to have if-statements
+{% if predicate %} what to do if predicate is True {% end if %}
+e.g.  {% if user_logged_in %} user {{username}} is logged in {% end if %}
+
+!!!Only put html and expression in if-statement, more features to come :)
+
+How to have for loops
+{% for variable in expression %} block to repeat {% end for %}
+e.g.  {% for user in users %} {{user}} exists {% end for %}
+
+!!!Only put html and expression in for-loops, more features to come :)
+
+
 There will be more features in the PRO version (if-statements, for-loops) :)
 
 =====================TORNADO TEAM=======================================

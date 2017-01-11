@@ -53,7 +53,7 @@ class Parser:
         return root.render(context)
 
     def _parse_group(self): #doesn't eat any tokens directly
-        node = GroupNode(None) #TODO needs parent
+        node = GroupNode()
         while not self.end():
             node.children.append(self._parse_components())
         return node
@@ -68,8 +68,7 @@ class Parser:
         return node
 
     def _parse_text(self):
-        #TODO: define parent (keep track)
-        node = TextNode(None, self.peek())
+        node = TextNode(self.peek())
         self.next() #moves parse to past text
         return node
 
@@ -87,7 +86,7 @@ class Parser:
 
         assert expr, 'Expression expected'
 
-        node = ExpressionNode(None, expr) #TODO needs parent
+        node = ExpressionNode(expr)
         return node
 
     def _parse_tag(self):
@@ -99,23 +98,91 @@ class Parser:
             assert self.next() == '%}', 'Close expected %}'
             self.next()
             return p._parse_group()
+        match = re.match(r'^\s*if\s+(\S.*)', tag)
+        if match:
+            return self._parse_simple_if()
+        match = re.match(r'^\s*for\s+(\S.*)', tag)
+        if match:
+            return self._parse_simple_for()
         assert False, 'Tag not recognised'
 
+    def _parse_simple_if(self):
+        predicate = self.peek()
+        close = self.next()
+
+        assert close == '%}', 'Close expected %}'
+
+        match = re.match(r'^\s*if\s+(\S.*)', predicate)
+        if match:
+            predicate = match.group(1)
+            tokens = []
+            while self.next() not in ['{%', '%}']:
+                tokens.append(self.peek())
+            if eval(predicate):
+                p = Parser(tokens)
+                node = p._parse_group()
+            else:
+                node = TextNode('')
+
+            open_end_if = self.peek()
+            end_if = self.next()
+            close_end_if = self.next()
+            self.next()
+
+            assert open_end_if == '{%', 'Open expected {%'
+            assert end_if.strip() == 'end if', 'End if expected'
+            assert close_end_if == '%}', 'Close expected %}'
+
+            return node
+
+        assert False, 'If statement not recognised'
+
+    def _parse_simple_for(self):
+        argument = self.peek()
+        close = self.next()
+
+        assert close == '%}', 'Close expected %}'
+
+        match = re.match(r'^\s*for\s+(\S+)\s+in\s+(\S+)\s*$', argument)
+        if match:
+            variable = match.group(1)
+            expression = match.group(2)
+            tokens = []
+            while self.next() not in ['{%', '%}']: #control block
+                tokens.append(self.peek())
+            p = Parser(tokens)
+            node = p._parse_group()
+            for_node = ForNode(variable, expression, node)
+            open_end_for = self.peek()
+            end_for = self.next()
+            close_end_for = self.next()
+            self.next()
+
+            assert open_end_for == '{%', 'Open expected {%'
+            assert end_for.strip() == 'end for', 'End for expected'
+            assert close_end_for == '%}', 'Close expected %}'
+
+            return for_node
+
+        assert False, 'For statement not recognised'
+
+
+
 class Node:
-    def __init__(self, parent): #need better variable names
-        self.parent = parent
+    def __init__(self): #need better variable names
+        pass
 
 class GroupNode(Node):
-    def __init__(self, parent):
-        super(GroupNode, self).__init__(parent)
+    def __init__(self):
+        super(GroupNode, self).__init__()
         self.children = []
 
     def render(self, context):
         return ''.join([child.render(context) for child in self.children])
 
 class TextNode(Node): #taking in html text --> do nothing
-    def __init__(self, parent, text):
-        super(TextNode, self).__init__(parent)
+    def __init__(self, text):
+        super(TextNode, self).__init__()
         self.text = text
 
     def render(self, context):
@@ -123,9 +190,43 @@ class TextNode(Node): #taking in html text --> do nothing
 
 
 class ExpressionNode(Node): #after {{ --> treat as Python expression
-    def __init__(self, parent, expression):
-        super(ExpressionNode, self).__init__(parent)
+    def __init__(self, expression):
+        super(ExpressionNode, self).__init__()
         self.expression = expression
 
     def render(self, context):
         return str(eval (self.expression, {}, context))
+
+class ForNode(Node):
+    def __init__(self, variable, expression, group_node):
+        super(ForNode, self).__init__()
+        self.variable = variable
+        self.expression = expression
+        self.group_node = group_node
+
+    def render (self, context):
+        for_list = []
+        for element in eval(self.expression, {}, context):
+            context[self.variable] = element
+            for_list.append(self.group_node.render(context)) #TODO security vulnerability?
+        return ''.join(for_list)
+
+
+class IfNode(Node):
+    def __init__(self, predicate, group_node):
+        super(IfNode, self).__init__()
+        self.predicate = predicate
+
+
+
+if __name__ == '__main__':
+    TEMPLATES_PATH = 'template_language\\test_templates'
+    print("====")
+    print(render_template('test.txt', {'d': 'username'}))
+    print("====")
+    print(render_template('test2.txt', {'d': 'username'}))
+    print("====")
+    print(render_template('simpleiftest.txt', {'d': 'username'}))
+    print("====")
+    print(render_template('simplefortest.txt', {'b': ['abc', 'def']}))
+    print("====")
