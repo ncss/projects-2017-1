@@ -13,9 +13,9 @@ conn.row_factory = sqlite3.Row
 cur = conn.cursor()
 
 class List:
-    def __init__(self, title, uid, id=None, created=None):
+    def __init__(self, title, userid, id=None, created=None):
         self.title = title
-        self.uid = uid
+        self.userid = userid
         self.id = id
         self.created = created
 
@@ -29,7 +29,7 @@ class List:
         or bucket object invalid
         '''
         self.created = datetime.datetime.now()
-        cur.execute('INSERT INTO lists (userid, title, created) VALUES (?, ?, ?);', (self.uid, self.title, self.created))
+        cur.execute('INSERT INTO lists (userid, title, created) VALUES (?, ?, ?);', (self.userid, self.title, self.created))
         conn.commit()
         self.id = cur.lastrowid
 
@@ -41,7 +41,7 @@ class List:
                     UPDATE lists
                     SET title = ?, userid = ?
                     WHERE id = ?;
-                    ''', (self.title, self.uid, self.id))
+                    ''', (self.title, self.userid, self.id))
         conn.commit()
 
     def delete(self):
@@ -55,23 +55,24 @@ class List:
     @staticmethod
     def search(**kwargs):
 
-        search_key = ''
-        search_value = ''
+        search_keys = []
+        search_values = []
 
-        search_options = ['id', 'userid', 'title']
+        search_options = ['title', 'userid', 'id', 'created']
 
-        for key, value in kwargs:
-
+        for key, value in kwargs.items():
             if value is not None and key in search_options:
-                search_key = key
-                search_value = value
+                search_keys.append(key + '=?')
+                search_values.append(value)
+
+        if search_keys == [] or search_values == []:
+            return "Invalid search"
 
         cur.execute('''
-
-            SELECT title, userid, id
+            SELECT title, userid, id, created
             FROM lists
-            WHERE {} = ?
-            '''.format(search_key), (search_value,)
+            WHERE {}
+            '''.format(' AND '.join(search_keys)), tuple(search_values)
         )
 
         rows = cur.fetchall()
@@ -79,7 +80,7 @@ class List:
         return [List(*row) for row in rows]
 
     @staticmethod
-    def get(list_id):
+    def get(listid):
         '''
         Get the bucket data of a given user
         '''
@@ -87,11 +88,11 @@ class List:
                     SELECT title, userid, id, created
                     FROM lists
                     WHERE id = ?;
-                    ''', (list_id,))
+                    ''', (listid,))
         row = cur.fetchone()
         if row is not None:
-            title, uid, id, created = row
-            return List(title, uid, id, created)
+            title, userid, id, created = row
+            return List(title, userid, id, created)
         return None
 
     @staticmethod
@@ -106,8 +107,8 @@ class List:
                     ''', (user.id,))
         lists = []
         for row in cur:
-            title, uid, id, created = row
-            lists.append(List(title, uid, id, created))
+            title, userid, id, created = row
+            lists.append(List(title, userid, id, created))
         return lists
 
     def get_items(self):
@@ -136,6 +137,14 @@ class List:
             created, title, userid, id = row
             create.append(List(title, userid, id, created))
         return create
+
+    def new_item(self, text=None, image=None):
+        '''
+        Add a new item.
+        '''
+        i = Item(self.id, False, text, image)
+        i.add()
+        return i
 
 class Item:
     def __init__(self, list_id, completed=False, text=None, image=None, id=None):
@@ -179,29 +188,32 @@ class Item:
             return Item(list_id, completed, text, image, item_id)
         return None
 
-    def search(self, id=None, list_id=None, text=None, rank=None, completed=None, image=None):
+    @staticmethod
+    def search(**kwargs):
 
-        search_key = ''
-        search_value = ''
+        search_keys = []
+        search_values = []
 
-        '''
-        for key, value in **kwargs.items():
-            if value is not None:
-                search_key = key
-                search_value = value
+        search_options = ['id', 'listid', 'text', 'completed', 'image']
 
-        '''
+        for key, value in kwargs.items():
+            if value is not None and key in search_options:
+                search_keys.append(key + ' = ?')
+                search_values.append(value)
+
+        if search_keys == [] or search_values == []:
+            return "Invalid search"
 
         cur.execute('''
-
-        SELECT id, list_id, text, rank, completed, image
-        FROM items
-        WHERE {} = ?
-        '''.format(search_key), (search_value,))
+            SELECT listid, completed, text, image, id
+            FROM items
+            WHERE {}
+            '''.format(' AND '.join(search_keys)), tuple(search_values)
+        )
 
         rows = cur.fetchall()
 
-        return [List(*row) for row in rows]
+        return [Item(*row) for row in rows]
 
     def update(self):
         '''
@@ -237,7 +249,7 @@ class User:
         Adds a user to the database,
         returns None if user already exists.
         '''
-        cur.execute("SELECT * FROM users WHERE username = ?;", (self.name,))
+        cur.execute("SELECT * FROM users WHERE username = ?", (self.name,))
         for row in cur:
             raise UserExistsError("User {} already Exists!!!".format(self.name))
         cur.execute('INSERT INTO users (username, password) VALUES (?, ?);', (self.name, self.password))
@@ -255,28 +267,34 @@ class User:
                     ''', (self.password, self.id))
         conn.commit()
 
-    def search(self, username=None, id=None):
+    @staticmethod
+    def search(**kwargs):
 
-        search_key = ''
-        search_value = ''
-        # Does kwargs need to be defined?
         '''
-        for key,value in **kwargs.items():
-            if value is not None:
-                search_key = key
-                search_value = value
+        Runs search and returns "Invalid search" if username not found
         '''
+
+        search_keys = []
+        search_values = []
+
+        search_options = ['username', 'password', 'id']
+        for key, value in kwargs.items():
+            if value is not None and key in search_options:
+                search_keys.append(key + '=?')
+                search_values.append(value)
+
+        if search_keys == [] or search_values == []:
+            return "Invalid search"
 
         cur.execute('''
-
-        SELECT from username, password, id
-        FROM users
-        WHERE {} = ?
-        '''.format(search_key), (search_value,))
+            SELECT username, password, id
+            FROM users
+            WHERE {}
+            '''.format(' AND '.join(search_keys)), tuple(search_values))
 
         rows = cur.fetchall()
 
-        return [List(*row) for row in rows]
+        return [User(*row) for row in rows]
 
     def delete(self):
         '''
@@ -344,6 +362,7 @@ class User:
         cur.execute('''SELECT title, userid, id, created
                     FROM lists
                     WHERE userid != ?
+                    ORDER BY created DESC;
                     ''', (self.id,))
         lists = []
         for row in cur:
@@ -351,13 +370,23 @@ class User:
             lists.append(List(title, uid, id, created))
         return lists
 
+    def new_list(self, title):
+        '''
+        Add a new bucket list to the given user.
+        '''
+        l = List(title, self.id)
+        l.add()
+        return l
+
+
 
 if __name__ == "__main__":
-    u2 = User('test1', 'testp')
+    '''u2 = User('test1', 'testp')
     u2.add()
     u2.password = "windowsisBad123"
     u2.update()
-    l = List("test list for user test1", u2.id)
+    #l = List("test list for user test1", u2.id)
+    l = u2.new_list("test list for user test1")
     l.add()
     l.title += "HUZZAH"
     l.update()
@@ -377,4 +406,15 @@ if __name__ == "__main__":
     item.delete()
     i.delete()
     l.delete()
-    u2.delete()
+    u2.delete()'''
+
+    # Testing search methods
+    #u = User('test', 'test')
+    #u.add()
+    l = List('test', 'test')
+    l.add()
+    #i = Item(l.id, text='test')
+    #i.add()
+    print(User.search(username='test', password='test'))
+    print(List.search(title='test', userid='test'))
+    print(Item.search(listid=4, text='test'))
