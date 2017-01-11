@@ -3,7 +3,7 @@ CREATE TABLE lists (
 	userid INTEGER NOT NULL,
 	title TEXT NOT NULL,
 	PRIMARY KEY (id),
-	FOREIGN KEY (userid) REFERENCES users(id),
+	FOREIGN KEY (userid) REFERENCES users(id)
 );
 
 CREATE TABLE items (
