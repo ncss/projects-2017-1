@@ -105,6 +105,34 @@ input {
   display: block;
 }
 
+/* Login Page */
+main, .login-section form, .login-section input {
+  display: block;
+  position: relative;
+  margin: auto;
+  margin-bottom: 5px;
+
+}
+
+.login-section input{
+  font-family: Comfortaa, 'sans-serif';
+  border: 2px solid rgb(170, 170, 170);
+  padding: 7px;
+  border-radius: 5px;
+  font-size: 15px;
+  text-align: center;
+}
+
+.login-section input:focus {
+  outline: 1px solid #001;
+  box-shadow: 5px;
+}
+
+.login-section .login-button:focus {
+  outline: none;
+
+/* Homepage */
+
 img#header{
   width: 100%
 }
