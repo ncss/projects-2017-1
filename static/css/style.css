@@ -81,19 +81,18 @@ button , label {
 
 }
 
-button , label {
-  font-family: Comfortaa, 'sans-serif';
-  font-size: 20px;
-  line-height: 31px;
-  list-style-type: none;
-  text-align: right;
-  margin-top: 20px;
-  margin-bottom: 20px;
-  border-radius: 30px;
-  background-color: white;
-  border-color: black; /*change to color on decision*/
-  padding: 2px 10px;
-
+.upload-button {
+  border-radius: 50%;
+  position: fixed;
+  bottom: 0px;
+  right: 0px;
+  left: auto;
+  margin-right: 40px;
+  margin-bottom: 30px;
+  font-size: 50px;
+  background-color: rgba(81, 81, 81, 0.27);
+  color: white;
+  border-color: transparent;
 }
 
 button:hover {
