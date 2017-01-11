@@ -5,6 +5,9 @@
   <main class="login-section">
     <form action="/user/create" method="post">
           <img src="/static/img/tickit_logo_only.png" alt="Tick It LOGO" width=160 height=160>
+          {% if disp %}
+          <p style="color:red" id="warn">{% if user_issue %}User Already Exists!!!{% end if %}{%if not user_issue%}Password Error!{% end if %}</p>
+          {% end if %}
           <input type="text" name="username" placeholder="Username" size="40">
           <input type="password" name="password" placeholder="Password" size="40">
           <input type="password" name="repeat_password" placeholder="Confirm Password" size="40">
