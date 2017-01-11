@@ -110,30 +110,29 @@ class List:
             lists.append(List(title, uid, id, created))
         return lists
 
-   def get_items(self):
-       cur.execute('''SELECT listid, completed, text, image, id
-                      FROM items
-                      WHERE listid=?;''' (self.id,)
-     items = []
-     for row in cur:
-         listid, completed, text, image, id = row
-         items.append(Item(listid, completed, text, image, id))
-     return items
+    def get_items(self):
+        cur.execute('''SELECT listid, completed, text, image, id
+                       FROM items
+                       WHERE listid=?;''' (self.id,)
+        items = []
+        for row in cur:
+            listid, completed, text, image, id = row
+            items.append(Item(listid, completed, text, image, id))
+        return items
 
-   def get_creation(self):
-       '''
-       Get bucket list by creation date
-       '''
-       cur.execute('''
-                   SELECT created, title, userid, id, 
-                   FROM lists
-                   WHERE created = ?;
-                   ''', (self.id,))
-       create = []
-       for row in cur:
-           title, userid, id, created = row
-           create.append(List(title, userid, id, created))
-       return create
+
+    @staticmethod
+        '''
+        '''
+        cur.execute('''
+                    SELECT created, title, userid, id
+                    FROM lists
+                    ''')
+        create = []
+        for row in cur:
+            created, title, userid, id = row
+            create.append(List(title, userid, id, created))
+        return create
 
 class Item:
     def __init__(self, list_id, completed=False, text=None, image=None, id=None):
