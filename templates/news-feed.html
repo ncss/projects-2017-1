@@ -2,14 +2,115 @@
 
 {% include header.html %}
 
-<main class="news-feed">
-  {% for user in names %}
+  <!--{% for user in names %}
     <figure>
       <a href="/list/{{ user_list }}">
         <img src="https://openclipart.org/image/2400px/svg_to_png/194077/Placeholder.png"/>
       </a>
       <figcaption>{{ user }}</figcaption>
     </figure>
-  {% end for %}
-</main>
-  <script src="/static/js/masonryfooter.js"></script>
+  {% end for %}-->
+
+<main class="news-feed"></main>
+<script src="/static/js/jquery-3.1.1.min.js"></script>
+<script src="/static/js/jquery.justified.min.js"></script>
+<script>
+  //var photos = ['/static/img/news_feed/1.jpeg', '/static/img/news_feed/2.png', '/static/img/news_feed/3.jpeg', '/static/img/news_feed/4.jpeg', '/static/img/news_feed/5.jpeg', '/static/img/news_feed/6.jpeg', '/static/img/news_feed/7.jpeg', '/static/img/news_feed/8.jpeg', '/static/img/news_feed/9.jpeg','/static/img/news_feed/10.png'];
+  var incomplete = ['/static/img/news_feed/1.jpeg', '/static/img/news_feed/3.jpeg' , '/static/img/news_feed/7.jpeg', '/static/img/news_feed/10.png'];
+  var sizes = {};
+  var loaded = 0;
+
+  var photos = [
+    {
+      id: 0,
+      url: '/static/img/news_feed/1.jpeg',
+      title: 'Some Image'
+    },
+    {
+      id: 1,
+      url: '/static/img/news_feed/2.png',
+      title: 'Another Image'
+    },
+    {
+      id: 2,
+      url: '/static/img/news_feed/3.jpeg',
+      title: 'Cindy'
+    },
+    {
+      id: 3,
+      url: '/static/img/news_feed/4.jpeg',
+      title: 'Um'
+    },
+    {
+      id: 4,
+      url: '/static/img/news_feed/5.jpeg',
+      title: 'Justin'
+    },
+    {
+      id: 5,
+      url: '/static/img/news_feed/6.jpeg',
+      title: 'Hughes'
+    },
+    {
+      id: 6,
+      url: '/static/img/news_feed/7.jpeg',
+      title: 'qwert'
+    },
+    {
+      id: 7,
+      url: '/static/img/news_feed/8.jpeg',
+      title: 'yuiop'
+    },
+    {
+      id: 8,
+      url: '/static/img/news_feed/9.jpeg',
+      title: 'asdf'
+    },
+    {
+      id: 9,
+      url: '/static/img/news_feed/10.png',
+      title: 'ghjkl'
+    }
+  ]
+
+  photos.forEach(function(photo) {
+    var myImage = new Image();
+    myImage.onload = function() {
+      sizes[photo.url] = {width: myImage.width , height: myImage.height};
+      loaded += 1;
+
+      if (loaded == photos.length) {
+        layoutImages();
+      }
+    }
+    myImage.src = photo.url;
+  });
+
+  function layoutImages() {
+    $('.news-feed').empty().justifiedImages({
+      images : photos,
+      rowHeight: 200,
+      maxRowHeight: 400,
+      thumbnailPath: function(photo){
+          return photo.url;
+      },
+      getSize: function(photo){
+          return sizes[photo.url];
+      },
+      template: function(photo) {
+        var isIncomplete = incomplete.indexOf(photo.src) > -1;
+        var html = '<div class="photo-container"><img class="image-thumb" src="' + photo.src + '" style="width: ' + photo.displayWidth + 'px;height: ' + photo.displayHeight + 'px;';
+
+        if (isIncomplete) {
+          html += 'opacity: 0.1'
+        }
+
+        html += '">';
+        html += '<p>' + photo.title + '</p>';
+        return html + '</div>';
+      },
+      margin: 5
+    });
+  }
+</script>
+</body>
