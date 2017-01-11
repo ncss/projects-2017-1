@@ -13,10 +13,13 @@ def is_authorised(request):
 
 def index_handler(request):
     cookie = request.get_secure_cookie('user_id')
+    user = User.get_by_id(int(cookie))
     if cookie == None:
         request.write(render_template('homepage.html', {}))
     else:
-        request.write(render_template('news-feed.html', {'title' : 'News Feed'}))
+        newsfeed = user.get_newsfeed()
+        users = [User.get_by_id(a.uid).name for a in newsfeed]
+        request.write(render_template('news-feed.html', {'names' : users, 'title' : 'News Feed'}))
 
 def login_handler(request):
     method = request.request.method
