@@ -25,6 +25,7 @@
   My Tickit List
 </h1>
   <br>
+  <form action="/list/{{ list_id }}" method="post">
   <img src="https://openclipart.org/image/800px/svg_to_png/194077/Placeholder.png" alt="item" width=80 height=80>
   <p>
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
@@ -40,9 +41,10 @@
   <p>
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
   </p>
-  <button class="save-button">
+  <button class="save-button" type="submit">
   Save
   </button>
     <script src="../js/masonryfooter.js"></script>
+</form>
 </body>
 </html>
