@@ -122,7 +122,7 @@ def signup_handler(request):
         username = request.get_field('username')
         password = request.get_field('password')
         repeat_password = request.get_field('repeat_password')
-        if password == repeat_password:
+        if password == repeat_password and len(password) > 1:
             user = User.get(username)
             if user is not None:
                 raise Exception("User already exists cant add account.")
