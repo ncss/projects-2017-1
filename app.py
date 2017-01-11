@@ -22,7 +22,7 @@ def index_handler(request):
         names = user.get_newsfeed()
         names = [user.get_by_id(a.userid) for a in names]
         user_list = user.get_lists()[0]
-        request.write(render_template('news-feed.html', {'user_id':str(request.get_secure_cookie('user_id'))[2:-1],  'user_id': user.id, 'names':names, 'is_user' : is_authorised(request), 'title' : 'News Feed', 'user' : user.name, 'user_list': user_list.id}))
+        request.write(render_template('news-feed.html', {'user_id':str(request.get_secure_cookie('user_id'))[2:-1], 'user_id': user.id, 'names':names, 'is_user' : is_authorised(request), 'title' : 'News Feed', 'user' : user.name, 'user_list': user_list.id}))
 
 
 def login_handler(request):
