@@ -9,16 +9,14 @@ TERMINALS = re.compile('\{\{|\}\}|\{\%|\%\}')
 TEMPLATES_PATH = 'templates'
 
 def render_template(template, context):#TODO add
-    #TODO close file
-    f = open(TEMPLATES_PATH + '/' + template).read() #TODO fix paths
-    tokeniser = Tokeniser()
-    tokens = tokeniser.tokenise(f)
-
-    parser = Parser(tokens)
+    parser = Parser(Tokeniser.tokenise(template))
     return parser.parse(context)
 
 class Tokeniser:
-    def tokenise(self, text):
+    @staticmethod
+    def tokenise(filename):
+        with open(TEMPLATES_PATH + '/' + filename) as f: #TODO fix path
+            text = f.read()
         tokens = []
         while text:
             match = TERMINALS.search(text) #TOKENS compiled above
@@ -97,14 +95,46 @@ class Parser:
         match = re.match(r'^\s*include\s+(\S+)\s*$', tag)
         if match:
             path = match.group(1)
-            #TODO close file
-            f = open(TEMPLATES_PATH + '/' + path).read() #TODO fix path
-            t = Tokeniser()
-            p = Parser(t.tokenise(f))
+            p = Parser(Tokeniser.tokenise(path))
             assert self.next() == '%}', 'Close expected %}'
             self.next()
             return p._parse_group()
+        match = re.match(r'^\s*if\s+(\S.*)', tag)
+        if match:
+            return self._parse_simple_if()
         assert False, 'Tag not recognised'
+
+    def _parse_simple_if(self):
+        predicate = self.peek()
+        close = self.next()
+
+        assert close == '%}', 'Close expected %}'
+
+        match = re.match(r'^\s*if\s+(\S.*)', predicate)
+        if match:
+            predicate = match.group(1)
+            tokens = []
+            while self.next() not in ['{%', '%}']:
+                tokens.append(self.peek())
+            if eval(predicate):
+                p = Parser(tokens)
+                node = p._parse_group()
+            else:
+                node = TextNode(None, '')
+
+            open_end_if = self.peek()
+            end_if = self.next()
+            close_end_if = self.next()
+            self.next()
+
+            assert open_end_if == '{%', 'Open expected {%'
+            assert end_if.strip() == 'end if', 'End if expected'
+            assert close_end_if == '%}', 'Close expected %}'
+
+            return node
+
+        assert False, 'If statement not recognised'
+
 
 class Node:
     def __init__(self, parent): #need better variable names
@@ -134,3 +164,8 @@ class ExpressionNode(Node): #after {{ --> treat as Python expression
 
     def render(self, context):
         return str(eval (self.expression, {}, context))
+
+class IfNode(Node):
+    def __init__(self, parent):
+        super(IfNode, self).__init__(parent)
+        self.predicate = predicate

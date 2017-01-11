@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+  <link href="https://fonts.googleapis.com/css?family=Comfortaa" rel="stylesheet">
+  <script src="../js/masonry.pkgd.min.js"></script>
+
+  <title> My Tickit List
+  </title>
+  </head>
+
+<header>
+    <img src="static/img/tickit_logo_only.png" alt="Tickit Logo" width=80 height=80>
+  <nav>
+    <a href="login.html">
+      Log In
+    </a>
+    <a href="login.html" >
+      Sign Up
+    </a>
+  </nav>
+</header>
+<body>
+  <h1>
+  My Tickit List
+</h1>
+  <br>
+  <form action="/list/{{ list_id }}" method="post">
+  <img src="https://openclipart.org/image/800px/svg_to_png/194077/Placeholder.png" alt="item" width=80 height=80>
+  <p>
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+  </p>
+  <img src="https://openclipart.org/image/800px/svg_to_png/194077/Placeholder.png" alt="item" width=80 height=80>
+  <p>
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+  </p>
+  <img src="https://openclipart.org/image/800px/svg_to_png/194077/Placeholder.png" alt="item" width=80 height=80>
+  <p>
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+  </p>
+  <p>
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+  </p>
+  <button class="save-button" type="submit">
+  Save
+  </button>
+    <script src="../js/masonryfooter.js"></script>
+</form>
+</body>
+</html>

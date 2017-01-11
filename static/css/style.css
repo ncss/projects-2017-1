@@ -1,0 +1,138 @@
+html,body {
+  margin: 0px;
+}
+
+header h1 {
+  font-family: Comfortaa;
+  font-size: 30px;
+  line-height: 33px;
+  margin-left: 60px;
+  margin-top: 0px;
+  display: inline-block;
+  border-bottom: 2px solid;
+  z-index: 20;
+}
+
+header {
+  background-color: rgba(170, 170, 170, 0.27);
+  position: fixed;
+  width: 100%;
+
+}
+
+main {
+  padding-top: 10%;
+  width: 90%;
+  margin: auto;
+  text-align: center;
+}
+
+textarea {
+  display: block;
+  width: 100%;
+  min-height: 200px;
+  font-family: Comfortaa;
+
+}
+
+nav {
+  display: inline-block;
+  float: right;
+  margin-right: 60px;
+}
+nav a {
+  font: 20px Comfortaa;
+  margin-right: 40px;
+  margin-top: 30px;
+  display: inline-block;
+  color: black;
+  text-decoration: none;
+
+}
+
+button {
+  font-family: Comfortaa, 'sans-serif';
+  font-size: 20px;
+  line-height: 31px;
+  list-style-type: none;
+  text-align: right;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  border-radius: 30px;
+  background-color: white;
+  border-color: black; /*change to color on decision*/
+  padding: 2px 10px;
+
+}
+
+button:hover {
+  background-color: lightgrey; /*change to color of border*/
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: Comfortaa;
+
+}
+h1 {
+  border-bottom: 2px solid;
+}
+
+p {
+  font: 18px/30px Comfortaa;
+
+}
+figcaption {
+  font-family: Comfortaa;
+}
+figure {
+  margin: 20px;
+}
+footer {
+  font-family: Comfortaa;
+}
+fieldset {
+  font: 20px Comfortaa;
+
+}
+
+main.news-feed img  {
+  max-height: 100px;
+  max-width: 200px;
+
+}
+input {
+  display: block;
+}
+
+/* Login Page */
+main, .login-section form, .login-section input {
+  display: block;
+  position: relative;
+  margin: auto;
+  margin-bottom: 5px;
+
+}
+
+.login-section input{
+  font-family: Comfortaa, 'sans-serif';
+  border: 2px solid rgb(170, 170, 170);
+  padding: 7px;
+  border-radius: 5px;
+  font-size: 15px;
+  text-align: center;
+}
+
+.login-section input:focus {
+  outline: 1px solid #001;
+  box-shadow: 5px;
+}
+
+.login-section .login-button:focus {
+  outline: none;
+
+/* Homepage */
+
+img#header{
+  width: 100%
+}
