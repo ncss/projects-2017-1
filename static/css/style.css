@@ -145,7 +145,7 @@ main, .login-section form, .login-section input {
   margin-bottom: 5px;
 }
 
-.login-section , .create{
+.login-section , .create , .list_bucketx{
   position: absolute;
   top: 50%;
   bottom: 50%;
@@ -200,6 +200,18 @@ form img {
   margin-right: auto;
 }
 
+
+/*.list_bucketx {
+  position: absolute;
+  top: 50%;
+  bottom: 50%;
+  margin-top: -300px;
+  margin-left: 95px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+*/
 .login-section input:focus {
   outline: 1px solid #001;
   box-shadow: 5px;
