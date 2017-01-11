@@ -114,7 +114,7 @@ class List:
     def get_items(self):
         cur.execute('''SELECT listid, completed, text, image, id
                        FROM items
-                       WHERE listid=?;''' (self.id,))
+                       WHERE listid=?;''', (self.id,))
         items = []
         for row in cur:
             listid, completed, text, image, id = row
@@ -361,9 +361,8 @@ class User:
         '''
         cur.execute('''SELECT title, userid, id, created
                     FROM lists
-                    WHERE userid != ?
                     ORDER BY created DESC;
-                    ''', (self.id,))
+                    ''')
         lists = []
         for row in cur:
             title, uid, id, created = row
