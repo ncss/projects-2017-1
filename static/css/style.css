@@ -66,6 +66,15 @@ nav a:hover {
 a {
   text-decoration: none;
 }
+a.floating {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  color: black;
+  border: 2px solid black;
+  padding: 10px 20px;
+
+}
 
 button , label, a.floating {
   font-family: Comfortaa, 'sans-serif';
@@ -82,11 +91,11 @@ button , label, a.floating {
 
 }
 
-button.floating {
+button.floating, a.floating {
   border-radius: 30px;
   background-color: white;
   border-color: black; /*change to color on decision*/
-  padding: 2px 10px;
+  padding: 5px 20px;
   font-size: 30px;
   position: fixed;
   bottom: 20px;
