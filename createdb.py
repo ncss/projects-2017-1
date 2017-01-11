@@ -67,8 +67,6 @@ cur.execute("INSERT INTO lists VALUES (0, 0, 'listtittle', ?);", (now,))
 cur.execute("INSERT INTO lists VALUES (1, 1, 'listtittle1', ?);", (now,))
 cur.execute("INSERT INTO lists VALUES (2, 2, 'listtitle2', ?);", (now,))
 cur.execute("INSERT INTO lists VALUES (3, 3, 'listtitle3', ?);", (now,))
-cur.execute("INSERT INTO lists VALUES (4, 4, 'listtitle4', ?);", (now,))
-cur.execute("INSERT INTO lists VALUES (5, 5, 'listtitle5', ?);", (now,))
 
 cur.execute("INSERT INTO items VALUES (0, 0, 'Word1', NULL, 0 );")
 cur.execute("INSERT INTO items VALUES (1, 1, 'Word2', NULL, 1 );")
@@ -76,9 +74,9 @@ cur.execute("INSERT INTO items VALUES (2, 2, 'Word3', NULL, 0 );")
 cur.execute("INSERT INTO items VALUES (3, 3, 'Word4', NULL, 1 );")
 
 
-cur.execute("INSERT INTO comments VALUES (0, 0, 0, 'Comment', ?)" (now,))
-cur.execute("INSERT INTO comments VALUES (1, 1, 1, 'Comment1', ?)" (now,))
-cur.execute("INSERT INTO comments VALUES (2, 2, 2, 'Comment2', ?)" (now,))
-cur.execute("INSERT INTO comments VALUES (3, 3, 3, 'Comment3', ?)" (now,))
+cur.execute("INSERT INTO comments VALUES (0, 0, 0, 'Comment', ?)", (now,))
+cur.execute("INSERT INTO comments VALUES (1, 1, 1, 'Comment1', ?)", (now,))
+cur.execute("INSERT INTO comments VALUES (2, 2, 2, 'Comment2', ?)", (now,))
+cur.execute("INSERT INTO comments VALUES (3, 3, 3, 'Comment3', ?)", (now,))
 
 conn.commit()
