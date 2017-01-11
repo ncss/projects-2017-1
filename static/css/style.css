@@ -146,7 +146,7 @@ main, .login-section form, .login-section input {
   margin-bottom: 5px;
 }
 
-.login-section {
+.login-section , .create{
   position: absolute;
   top: 50%;
   bottom: 50%;
