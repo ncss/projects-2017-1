@@ -22,7 +22,7 @@ def index_handler(request):
         names = user.get_newsfeed()
         names = [user.get_by_id(a.userid) for a in names]
         user_list = user.get_lists()[0]
-        request.write(render_template('news-feed.html', {'user_id': user.id, 'names':names, 'is_user' : is_authorised(request), 'title' : 'News Feed', 'user' : user.name, 'user_list': user_list.id}))
+        request.write(render_template('news-feed.html', {'user_id':str(request.get_secure_cookie('user_id'))[2:-1],  'user_id': user.id, 'names':names, 'is_user' : is_authorised(request), 'title' : 'News Feed', 'user' : user.name, 'user_list': user_list.id}))
 
 
 def login_handler(request):
@@ -53,7 +53,7 @@ def list_creation_handler(request):
 
     if method == 'GET':
         user_list = user.get_lists()[0]
-        request.write(render_template('create.html', {'user' : user.name, 'is_user' : is_authorised(request), 'title' : 'Create A List', 'user_list': user_list.id}))
+        request.write(render_template('create.html', {'user_id':str(request.get_secure_cookie('user_id'))[2:-1],  'user' : user.name, 'is_user' : is_authorised(request), 'title' : 'Create A List', 'user_list': user_list.id}))
         # with open("not_instagram.html") as f:
         #     request.write(f.read())
         #     return
@@ -97,7 +97,7 @@ def list_display_handler(request, list_id):
             items = {}
             for item in bucket:
                 items[item] = Item.get(item)
-            request.write(render_template('my_bucket_list.html', {'logged_in_username' : user2.name, 'bucket' : bucket, 'items':items, 'user' : user.name, 'is_user' : is_authorised(request), 'list_title' : ls.title, 'user_name' : user.name, 'list_id' : ls.id, 'title' : "{}\'s Bucket List\'".format(user.name), 'user_list': user_list.id}))
+            request.write(render_template('my_bucket_list.html', {'user_id':str(request.get_secure_cookie('user_id'))[2:-1],  'logged_in_username' : user2.name, 'bucket' : bucket, 'items':items, 'user' : user.name, 'is_user' : is_authorised(request), 'list_title' : ls.title, 'user_name' : user.name, 'list_id' : ls.id, 'title' : "{}\'s Bucket List\'".format(user.name), 'user_list': user_list.id}))
         else:
             pass
             # TODO pass list doesnt exist
