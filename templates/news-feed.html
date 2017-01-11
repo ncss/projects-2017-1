@@ -1,85 +1,15 @@
 <!DOCTYPE HTML>
-<html>
-<head>
-  <link rel="stylesheet" type="text/css" href="/static/css/style.css">
-  <link href="https://fonts.googleapis.com/css?family=Comfortaa" rel="stylesheet">
-  <script src="/static/js/masonry.pkgd.min.js"></script>
 
-  <title> News Feed
-  </title>
-  </head>
-
-<header>
-    <img src="https://openclipart.org/image/800px/svg_to_png/194077/Placeholder.png" alt="Temp GO-Logo" width=80 height=80>
-  <nav>
-    <a href="#">
-      Log In
-    </a>
-    <a href="#" >
-      Sign Up
-    </a>
-  </nav>
-</header>
-
+{% include header.html %}
 
 <main class="news-feed">
-  <figure>
-    <a href="#">
-      <img src="http://www.clker.com/cliparts/3/d/8/d/1299244651727919479eiffel-tower-973-2560x1600.jpg" alt="Eiffel Tower" height=400 width=400/>
-    </a>
-    <figcaption>USERNAME #1</figcaption>
-  </figure>
-  <figure>
-    <a href="#">
-      <img src="http://www.drakewealth.com/wp-content/uploads/2012/09/Website-Video-Page-Photos-4.jpg" alt="Beach" height=400 width=400/>
-    </a>
-    <figcaption>USERNAME #2</figcaption>
-  </figure>
-  <figure>
-    <a href="#">
-      <img src="http://www.neuschwanstein.de/bilder/tourist/slider/neuschw.jpg" alt="Neuschwanstein castle" width=400 height=400/>
-    </a>
-    <figcaption>USERNAME #3</figcaption>
-  </figure>
-  <figure>
-    <a href="#">
-      <img src="https://secure.parksandresorts.wdpromedia.com/resize/mwImage/1/900/360/75/wdpromedia.disney.go.com/media/wdpro-assets/dlr/parks-and-tickets/destinations/disneyland-park/disneyland-00-full.jpg?15052013102112" alt="Disneyland" width=400 height=400/>
-    </a>
-    <figcaption>USERNAME #4</figcaption>
-  </figure>
-  <figure>
-    <a href="#">
-      <img src="https://s-media-cache-ak0.pinimg.com/originals/52/36/4d/52364dafd757278c38273dd32fefc49d.jpg" alt="Rollercoaster" width=400 height=400/>
-    </a>
-    <figcaption>USERNAME #5</figcaption>
-  </figure>
-  <figure>
-    <a href="#">
-      <img src="http://www.lifeadventures.us/wp-content/uploads/2014/05/109-800x400.jpg" alt="Hike" width=400 height=400/>
-    </a>
-    <figcaption>USERNAME #6</figcaption>
-  </figure>
-  <figure>
-    <a href="#">
-      <img src="https://networkingtimes.com/blog/wp-content/uploads/2016/10/Adventure-Dreams-05.jpg" alt="Skydive" width=400 height=400/>
-    </a>
-    <figcaption>USERNAME #7</figcaption>
-  </figure>
-  <figure>
-    <a href="#">
-      <img src="http://s.hswstatic.com/gif/mt-everest-tourism-171676392.jpg" alt="Mt Everest" width=400 height=400/>
-    </a>
-    <figcaption>USERNAME #8</figcaption>
-  </figure>
-  <figure>
-    <a href="#">
-      <img src="http://sascubashack.com/Site/home-images/scuba-divers-very-large.png" alt="Scuba" width=400 height=400/>
-    </a>
-    <figcaption>USERNAME #9</figcaption>
-  </figure>
-
+  {% for user in {{ names }} %}
+    <figure>
+      <a href="/{{ user }}">
+        <img src="random photo"/>
+      </a>
+      <figcaption>{{ user }}</figcaption>
+    </figure>
+  {% end for %}
 </main>
-
-
   <script src="/static/js/masonryfooter.js"></script>
-</html>

@@ -1,47 +1,23 @@
 <!DOCTYPE html>
-<html>
 
-<style>
-
-
-</style>
+{% include header.html %}
 
 <head>
   <link rel="stylesheet" type="text/css" href="/static/css/style.css">
-  <link href="https://fonts.googleapis.com/css?family=Comfortaa" rel="stylesheet">
-  <script src="static/js/masonry.pkgd.min.js"></script>
-  <script src="static/js/masonryfooter.js"></script>
-  <title> Create List
-  </title>
+  <link href="http://fonts.googleapis.com/css?family=Comfortaa|Permanent+Marker|Roboto+Slab|Ruslan+Display" rel="stylesheet">
+
 </head>
 
-<header>
-    <img src="static/img/tickit_logo_only.png" alt="Temp GO-Logo" width=80 height=80>
-  <nav>
-    <a href="#">
-      Log In
-    </a>
-    <a href="#" >
-      Sign Up
-    </a>
-  </nav>
-</header>
-
-
-<body>
-  <main>
-    <form action="/list/create" method="post" enctype="multipart/form-data">
-      <input type="file" name="image" accept="image/*">
-      <br>
-      <textarea name="description" width=100 ></textarea>
-      <button class="save" type="submit">
-        Save
-      </button>
-    </form>
-  </main>
-  </body>
-
-<footer>
-
-</footer>
-</html>
+<main>
+  <form action="/list/create" method="post">
+    <button class="upload">
+      Upload
+    </button>
+    <br>
+    <input type="file" name="upload" placeholder="UPLOAD">
+    <input type="text" name="description" placeholder="Description" size="80" height="100">
+    <button class="save">
+      Save
+    </button>
+  </form>
+</main>

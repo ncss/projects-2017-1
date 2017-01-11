@@ -16,11 +16,12 @@ def index_handler(request):
     cookie = request.get_secure_cookie('user_id')
     user = User.get_by_id(int(cookie))
     if cookie == None:
-        request.write(render_template('homepage.html', {'is_user' : is_authorised(), }))
+        request.write(render_template('homepage.html', {'is_user' : is_authorised(request), 'title' : "Home Page" }))
     else:
         newsfeed = user.get_newsfeed()
         users = [User.get_by_id(a.uid).name for a in newsfeed]
-        request.write(render_template('news-feed.html', {'names' : users, 'is_user' : is_authorised(), 'title' : 'News Feed'}))
+        request.write(render_template('news-feed.html', {'names' : users, 'is_user' : is_authorised(request), 'title' : 'News Feed'}))
+
 
 def login_handler(request):
     method = request.request.method
@@ -29,7 +30,7 @@ def login_handler(request):
         return
 
     if method == 'GET':
-        request.write(render_template('login.html', {'is_user' : is_authorised(), 'location' : '/login'}))
+        request.write(render_template('login.html', {'is_user' : is_authorised(request), 'location' : '/login', 'title' : "Login" }))
     elif method == 'POST':
         username = request.get_field('username')
         password = request.get_field('password')
@@ -46,7 +47,7 @@ def list_creation_handler(request):
         return
 
     if method == 'GET':
-        request.write(render_template('create.html', {'is_user' : is_authorised(), 'title' : 'Create A List'}))
+        request.write(render_template('create.html', {'is_user' : is_authorised(request), 'title' : 'Create A List'}))
         # with open("not_instagram.html") as f:
         #     request.write(f.read())
         #     return
@@ -72,7 +73,7 @@ def list_display_handler(request, list_id):
     if method == 'GET':
         ls = List.get(int(list_id))
         user = User.get_by_id(ls.uid)
-        request.write(render_template('my_bucket_list.html', {'is_user' : is_authorised(), 'list_title' : ls.title, 'user_name' : user.name, 'list_id' : ls.id}))
+        request.write(render_template('my_bucket_list.html', {'is_user' : is_authorised(request), 'list_title' : ls.title, 'user_name' : user.name, 'list_id' : ls.id, 'title' : "{}\'s Bucket List\'".format(user.name)}))
     elif method == 'POST':
         # submit checkboxes to database
         pass
@@ -84,7 +85,7 @@ def signup_handler(request):
         return
 
     if method == 'GET':
-        request.write(render_template('login.html', {'is_user' : is_authorised(), 'location' : '/user/create'}))
+        request.write(render_template('login.html', {'is_user' : is_authorised(request), 'location' : '/user/create', 'title' : "Sign Up" }))
     elif method == 'POST':
         print("running post")
         username = request.get_field('username')

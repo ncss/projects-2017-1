@@ -10,7 +10,7 @@ TEMPLATES_PATH = 'templates'
 
 def render_template(template, context):#TODO add
     parser = Parser(Tokeniser.tokenise(template))
-    return parser.parse(context)
+    return parser.parse().render(context)
 
 class Tokeniser:
     @staticmethod
@@ -48,28 +48,55 @@ class Parser:
         self._upto += 1
         return self.peek()
 
-    def parse(self, context):
-        root = self._parse_group()
-        return root.render(context)
+    def parse(self):
+        root = GroupNode()
+        self._parse(root, None)
+        return root
 
-    def _parse_group(self): #doesn't eat any tokens directly
-        node = GroupNode(None) #TODO needs parent
+    def _parse(self, parent, parent_tag):
         while not self.end():
-            node.children.append(self._parse_components())
-        return node
+            if self.peek() == '{{':
+                parent.children.append(self._parse_expr())
+            elif self.peek() == '{%':
+                tag = self.next()
+                match = re.match(r'^\s*(\S+)\s*(.*)$', tag)
+                assert match, 'no argument to {%'
+                tag = match.group(1)
+                argument = match.group(2)
+                assert self.next() == '%}', 'No close %} tag'
+                self.next()
 
-    def _parse_components(self): #doesn't eat any tokens directly
-        if self.peek() == '{{':
-            node = self._parse_expr()
-        elif self.peek() == '{%':
-            node = self._parse_tag()
-        else:
-            node = self._parse_text()
-        return node
+                if tag == 'include':
+                    p = Parser(Tokeniser.tokenise(argument.strip()))
+                    node = p.parse()
+                    parent.children.append(node)
+
+                if tag == 'if':
+                    group_node = GroupNode()
+                    node = IfNode(argument, group_node)
+                    self._parse(group_node, 'if')
+                    parent.children.append(node)
+
+                if tag == 'for':
+                    group_node = GroupNode()
+                    match = re.match(r'^\s*(\S+)\s+in\s+(.*)$', argument)
+                    variable = match.group(1)
+                    expression = match.group(2)
+                    node = ForNode(variable, expression, group_node)
+                    self._parse(group_node, 'for')
+                    parent.children.append(node)
+
+                if tag == 'end':
+                    assert argument.strip() == parent_tag, 'close tag does not match open tag'
+                    return
+            else:
+                parent.children.append(self._parse_text())
+
+        assert parent_tag == None, 'Still have open tag at end of template'
+        return
 
     def _parse_text(self):
-        #TODO: define parent (keep track)
-        node = TextNode(None, self.peek())
+        node = TextNode(self.peek())
         self.next() #moves parse to past text
         return node
 
@@ -87,103 +114,24 @@ class Parser:
 
         assert expr, 'Expression expected'
 
-        node = ExpressionNode(None, expr) #TODO needs parent
+        node = ExpressionNode(expr)
         return node
 
-    def _parse_tag(self):
-        tag = self.next()
-        match = re.match(r'^\s*include\s+(\S+)\s*$', tag)
-        if match:
-            path = match.group(1)
-            p = Parser(Tokeniser.tokenise(path))
-            assert self.next() == '%}', 'Close expected %}'
-            self.next()
-            return p._parse_group()
-        match = re.match(r'^\s*if\s+(\S.*)', tag)
-        if match:
-            return self._parse_simple_if()
-        match = re.match(r'^\s*for\s+(\S.*)', tag)
-        if match:
-            return self._parse_simple_for()
-        assert False, 'Tag not recognised'
-
-    def _parse_simple_if(self):
-        predicate = self.peek()
-        close = self.next()
-
-        assert close == '%}', 'Close expected %}'
-
-        match = re.match(r'^\s*if\s+(\S.*)', predicate)
-        if match:
-            predicate = match.group(1)
-            tokens = []
-            while self.next() not in ['{%', '%}']:
-                tokens.append(self.peek())
-            if eval(predicate):
-                p = Parser(tokens)
-                node = p._parse_group()
-            else:
-                node = TextNode(None, '')
-
-            open_end_if = self.peek()
-            end_if = self.next()
-            close_end_if = self.next()
-            self.next()
-
-            assert open_end_if == '{%', 'Open expected {%'
-            assert end_if.strip() == 'end if', 'End if expected'
-            assert close_end_if == '%}', 'Close expected %}'
-
-            return node
-
-        assert False, 'If statement not recognised'
-
-    def _parse_simple_for(self):
-        argument = self.peek()
-        close = self.next()
-
-        assert close == '%}', 'Close expected %}'
-
-        match = re.match(r'^\s*for\s+(\S+)\s+in\s+(\S+)\s*$', argument)
-        if match:
-            variable = match.group(1)
-            expression = match.group(2)
-            tokens = []
-            while self.next() not in ['{%', '%}']: #control block
-                tokens.append(self.peek())
-            p = Parser(tokens)
-            node = p._parse_group()
-            for_node = ForNode(None, variable, expression, node)
-            open_end_for = self.peek()
-            end_for = self.next()
-            close_end_for = self.next()
-            self.next()
-
-            assert open_end_for == '{%', 'Open expected {%'
-            assert end_for.strip() == 'end for', 'End for expected'
-            assert close_end_for == '%}', 'Close expected %}'
-
-            return for_node
-
-        assert False, 'For statement not recognised'
-
-
-
 class Node:
-    def __init__(self, parent): #need better variable names
-        self.parent = parent
+    def __init__(self): #need better variable names
+        pass
 
 class GroupNode(Node):
-    def __init__(self, parent):
-        super(GroupNode, self).__init__(parent)
+    def __init__(self):
+        super(GroupNode, self).__init__()
         self.children = []
 
     def render(self, context):
         return ''.join([child.render(context) for child in self.children])
 
 class TextNode(Node): #taking in html text --> do nothing
-    def __init__(self, parent, text):
-        super(TextNode, self).__init__(parent)
+    def __init__(self, text):
+        super(TextNode, self).__init__()
         self.text = text
 
     def render(self, context):
@@ -191,16 +139,16 @@ class TextNode(Node): #taking in html text --> do nothing
 
 
 class ExpressionNode(Node): #after {{ --> treat as Python expression
-    def __init__(self, parent, expression):
-        super(ExpressionNode, self).__init__(parent)
+    def __init__(self, expression):
+        super(ExpressionNode, self).__init__()
         self.expression = expression
 
     def render(self, context):
         return str(eval (self.expression, {}, context))
 
 class ForNode(Node):
-    def __init__(self, parent, variable, expression, group_node):
-        super(ForNode, self).__init__(parent)
+    def __init__(self, variable, expression, group_node):
+        super(ForNode, self).__init__()
         self.variable = variable
         self.expression = expression
         self.group_node = group_node
@@ -214,10 +162,16 @@ class ForNode(Node):
 
 
 class IfNode(Node):
-    def __init__(self, parent):
-        super(IfNode, self).__init__(parent)
+    def __init__(self, predicate, group_node):
+        super(IfNode, self).__init__()
         self.predicate = predicate
+        self.group_node = group_node
 
+    def render(self, context):
+        if eval(self.predicate, {}, context):
+            result = self.group_node.render(context)
+            return result
+        return ""
 
 if __name__ == '__main__':
     TEMPLATES_PATH = 'template_language\\test_templates'
@@ -229,4 +183,6 @@ if __name__ == '__main__':
     print(render_template('simpleiftest.txt', {'d': 'username'}))
     print("====")
     print(render_template('simplefortest.txt', {'b': ['abc', 'def']}))
+    print("====")
+    print(render_template('complextest.txt', {'b': ['abc', 'def']}))
     print("====")
