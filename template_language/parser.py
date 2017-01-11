@@ -53,7 +53,7 @@ class Parser:
         return root.render(context)
 
     def _parse_group(self): #doesn't eat any tokens directly
-        node = GroupNode(None) #TODO needs parent
+        node = GroupNode()
         while not self.end():
             node.children.append(self._parse_components())
         return node
@@ -68,8 +68,7 @@ class Parser:
         return node
 
     def _parse_text(self):
-        #TODO: define parent (keep track)
-        node = TextNode(None, self.peek())
+        node = TextNode(self.peek())
         self.next() #moves parse to past text
         return node
 
@@ -87,7 +86,7 @@ class Parser:
 
         assert expr, 'Expression expected'
 
-        node = ExpressionNode(None, expr) #TODO needs parent
+        node = ExpressionNode(expr)
         return node
 
     def _parse_tag(self):
@@ -123,7 +122,7 @@ class Parser:
                 p = Parser(tokens)
                 node = p._parse_group()
             else:
-                node = TextNode(None, '')
+                node = TextNode('')
 
             open_end_if = self.peek()
             end_if = self.next()
@@ -153,7 +152,7 @@ class Parser:
                 tokens.append(self.peek())
             p = Parser(tokens)
             node = p._parse_group()
-            for_node = ForNode(None, variable, expression, node)
+            for_node = ForNode(variable, expression, node)
             open_end_for = self.peek()
             end_for = self.next()
             close_end_for = self.next()
@@ -170,20 +169,20 @@ class Parser:
 
 
 class Node:
-    def __init__(self, parent): #need better variable names
-        self.parent = parent
+    def __init__(self): #need better variable names
+        pass
 
 class GroupNode(Node):
-    def __init__(self, parent):
-        super(GroupNode, self).__init__(parent)
+    def __init__(self):
+        super(GroupNode, self).__init__()
         self.children = []
 
     def render(self, context):
         return ''.join([child.render(context) for child in self.children])
 
 class TextNode(Node): #taking in html text --> do nothing
-    def __init__(self, parent, text):
-        super(TextNode, self).__init__(parent)
+    def __init__(self, text):
+        super(TextNode, self).__init__()
         self.text = text
 
     def render(self, context):
@@ -191,16 +190,16 @@ class TextNode(Node): #taking in html text --> do nothing
 
 
 class ExpressionNode(Node): #after {{ --> treat as Python expression
-    def __init__(self, parent, expression):
-        super(ExpressionNode, self).__init__(parent)
+    def __init__(self, expression):
+        super(ExpressionNode, self).__init__()
         self.expression = expression
 
     def render(self, context):
         return str(eval (self.expression, {}, context))
 
 class ForNode(Node):
-    def __init__(self, parent, variable, expression, group_node):
-        super(ForNode, self).__init__(parent)
+    def __init__(self, variable, expression, group_node):
+        super(ForNode, self).__init__()
         self.variable = variable
         self.expression = expression
         self.group_node = group_node
@@ -214,9 +213,10 @@ class ForNode(Node):
 
 
 class IfNode(Node):
-    def __init__(self, parent):
-        super(IfNode, self).__init__(parent)
+    def __init__(self, predicate, group_node):
+        super(IfNode, self).__init__()
         self.predicate = predicate
+
 
 
 if __name__ == '__main__':
