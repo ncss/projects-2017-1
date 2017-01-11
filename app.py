@@ -20,7 +20,7 @@ def index_handler(request):
         user = User.get_by_id(int(cookie))
         names = user.get_newsfeed()
         names = [user.get_by_id(a.uid).name for a in names]
-        request.write(render_template('news-feed.html', {'names':names,'is_user' : is_authorised(request), 'title' : 'News Feed', 'user' : user.name}))
+        request.write(render_template('news-feed.html', {'names':names,'is_user' : is_authorised(request), 'title' : 'News Feed', 'user' : user.name, 'user_id': int(cookie)}))
 
 def login_handler(request):
     method = request.request.method

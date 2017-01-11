@@ -2,14 +2,20 @@
 
 {% include header.html %}
 
-<main class="news-feed">
-  {% for user in  names  %}
-    <figure>
-      <a href="/{{ user }}">
-        <img src="random photo"/>
-      </a>
-      <figcaption>{{ user }}</figcaption>
-    </figure>
-  {% end for %}
-</main>
+<main>
+    <section class="news-feed">
+    {% for user in  names  %}
+      <figure>
+        <a href="/{{ user }}">
+          <img src="random photo"/>
+        </a>
+        <figcaption>{{ user }}</figcaption>
+      </figure>
+    {% end for %}
+
+    </section>
+  <a href="/list/{{ user_id }}" class="floating">
+    Edit
+  </a>
+  </main>
   <script src="/static/js/masonryfooter.js"></script>
