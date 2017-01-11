@@ -6,7 +6,7 @@ import re
 TERMINALS = re.compile('\{\{|\}\}|\{\%|\%\}')
 #oops, changed constant
 #TOKENS = [re.compile() for token in TOKENS] #list comprehension
-TEMPLATES_PATH = 'HTML'
+TEMPLATES_PATH = 'templates'
 
 def render_template(template, context):#TODO add
     parser = Parser(Tokeniser.tokenise(template))
