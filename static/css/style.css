@@ -125,9 +125,10 @@ fieldset {
 
 section.news-feed img  {
   max-height: 100px;
-  max-width: 200px;
-
+  max-width: 100px;
 }
+
+
 input {
   display: block;
 }
@@ -202,5 +203,10 @@ form img {
 
 .login-section .login-button:focus {
   outline: none;
+}
 
 /* Homepage */
+main.news-feed {
+  position: absolute;
+  top: 100px;
+}

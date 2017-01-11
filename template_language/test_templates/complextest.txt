@@ -1,4 +1,11 @@
-jhvlkSJBlaskjdhALSKJDHaslkdh
-{% for a in b %} asdfasdasaf {{ a }}
-{% if 1 %} dkfjslk {{ 1 + 1}} {% end if %}
-dfg dfg dfg {% end for %} dkfjsdlkfhhd
+YOOOHOOOO
+{% for i in range(10) %} this is something {{ i + 1 }}
+{% if 1 %} str {{ i + 1 }} {% end if %}
+expression {% end for %} END
+
+================================================
+
+{% let var = 'expr' %} {{ var }}
+{% let var = '' %} {{ var }}
+{% let var = None %} {{ var }}
+{% let var = 3 %} {{ var }}

@@ -72,6 +72,14 @@ class Parser:
                     node = p.parse()
                     parent.children.append(node)
 
+                if tag == 'let':
+                    group_node = GroupNode()
+                    match = re.match(r'^\s*(\S+)\s*=\s*(.*)$', argument)
+                    variable = match.group(1)
+                    expression = match.group(2)
+                    assignment_node = AssignmentNode(variable, expression)
+                    parent.children.append(assignment_node)
+
                 if tag == 'if':
                     group_node = GroupNode()
                     node = IfNode(argument, group_node)
@@ -86,6 +94,11 @@ class Parser:
                     node = ForNode(variable, expression, group_node)
                     self._parse(group_node, 'for')
                     parent.children.append(node)
+
+                if tag == 'comment':
+                    group_node = GroupNode()
+                    self._parse(group_node,'comment')
+                    ## Parse through a comment and not append to parent
 
                 if tag == 'end':
                     assert argument.strip() == parent_tag, 'close tag does not match open tag'
@@ -138,7 +151,6 @@ class TextNode(Node): #taking in html text --> do nothing
     def render(self, context):
         return self.text
 
-
 class ExpressionNode(Node): #after {{ --> treat as Python expression
     def __init__(self, expression):
         super(ExpressionNode, self).__init__()
@@ -150,6 +162,16 @@ class ExpressionNode(Node): #after {{ --> treat as Python expression
             return str(eval(safe.group(1), {}, context))
         else:
             return html.escape(str(eval(self.expression, {}, context)))
+
+class AssignmentNode(Node):
+    def __init__(self, variable, expression):
+        super(AssignmentNode, self).__init__()
+        self.variable = variable
+        self.expression = expression
+
+    def render(self, context):
+        context[self.variable] = eval(self.expression) #dictionary index with key
+        return ''
 
 class ForNode(Node):
     def __init__(self, variable, expression, group_node):
@@ -165,7 +187,6 @@ class ForNode(Node):
             for_list.append(self.group_node.render(context)) #TODO security vulnerability?
         return ''.join(for_list)
 
-
 class IfNode(Node):
     def __init__(self, predicate, group_node):
         super(IfNode, self).__init__()
@@ -176,7 +197,7 @@ class IfNode(Node):
         if eval(self.predicate, {}, context):
             result = self.group_node.render(context)
             return result
-        return ""
+        return ''
 
 if __name__ == '__main__':
     TEMPLATES_PATH = 'test_templates'
@@ -192,4 +213,6 @@ if __name__ == '__main__':
     print(render_template('complextest.txt', {'b': ['abc', 'def']}))
     print("====")
     print(render_template('safetest.txt', {'d': 'username'}))
+    print("====")
+    print(render_template('commenttest.txt', {'d': 'username'}))
     print("====")
