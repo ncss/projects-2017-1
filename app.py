@@ -5,14 +5,14 @@ from template_language.parser import render_template
 def index_handler(request):
     cookie = request.get_secure_cookie('user_id')
     if cookie == None:
-        request.write('Welcome to our site!')
+        request.write(render_template('homepage.html', {}))
     else:
         request.write(render_template('news-feed.html', {'title' : 'News Feed'}))
 
 def login_handler(request):
     method = request.request.method
     if method == 'GET':
-        request.write(render_template('not_instagram.html', {'location' : '/login'}))
+        request.write(render_template('login.html', {'location' : '/login'}))
     elif method == 'POST':
         username = request.get_field('username')
         password = request.get_field('password')
@@ -42,9 +42,9 @@ def list_creation_handler(request):
 def list_display_handler(request, list_id):
     method = request.request.method
     if method == 'GET':
-        user = User.get_by_id(List.get(int(list_id)).uid)
-        request.write(render_template('usernames_bucket_list(templated).html', {'title': 'Bucket List', 'username' : user.name}))
-        # request.write(render_template('not_instagram.html', {'location' : '/list/{}/'.format(list_id)}))
+        ls = List.get(int(list_id))
+        user = User.get_by_id(ls.uid)
+        request.write(render_template('my_bucket_list.html', {'list_title' : ls.title, 'user_name' : user.name, 'list_id' : ls.id}))
     elif method == 'POST':
         # submit checkboxes to database
         pass
@@ -52,7 +52,7 @@ def list_display_handler(request, list_id):
 def signup_handler(request):
     method = request.request.method
     if method == 'GET':
-        request.write(render_template('signup(templated).html', {'title' : 'Sign Up'}))
+        request.write(render_template('login.html', {'title' : 'Sign Up'}))
     elif method == 'POST':
         print("running post")
         username = request.get_field('username')
