@@ -125,6 +125,11 @@ main, .login-section form, .login-section input {
   justify-content: center;
 }
 
+form img {
+  padding-bottom: 20px;
+  
+}
+
 .login-section input{
   font-family: Comfortaa, 'sans-serif';
   border: 2px solid rgb(170, 170, 170);
