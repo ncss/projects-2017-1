@@ -3,12 +3,13 @@
 {% include header.html %}
 
   <main class="login-section">
-    <form action="/login" method="post">
+    <form action="/user/create" method="post">
           <img src="/static/img/tickit_logo_only.png" alt="Tick It LOGO" width=160 height=160>
           <input type="text" name="username" placeholder="Username" size="40">
           <input type="password" name="password" placeholder="Password" size="40">
+          <input type="password" name="repeat_password" placeholder="Confirm Password" size="40">
           <button class="login-button">
-            LOGIN
+            SIGN UP
           </button>
     </form>
   </main>

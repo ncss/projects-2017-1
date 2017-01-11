@@ -3,26 +3,33 @@ html,body {
 }
 
 header h1 {
-  font-family: Comfortaa;
-  font-size: 30px;
-  line-height: 33px;
-  margin-left: 60px;
-  margin-top: 0px;
+  font-family: 'Amatic SC';
+  font-size: 60px;
+  margin: 0px auto 0px auto;
   display: inline-block;
-  border-bottom: 2px solid;
-  z-index: 20;
+  position: relative;
+  bottom: 11px;
+  color: white;
 
+}
+header span {
+  font-family: 'Amatic SC';
+  font-size: 40px;
+  padding-right: 100px;
+
+}
+header img, header h1 {
+   -webkit-filter: drop-shadow(0px 0px 5px rgba(0,0,0,0.2));
 }
 
 header {
-  background-color: rgba(170, 170, 170, 0.27);
+  background-color: rgba(81, 81, 81, 0.27);
   position: fixed;
   width: 100%;
 
 }
 
 main {
-  padding-top: 10%;
   width: 90%;
   margin: auto;
   text-align: center;
@@ -43,15 +50,38 @@ nav {
 }
 nav a {
   font: 25px Comfortaa;
-  margin-right: 40px;
-  margin-top: 30px;
+  padding-right: 40px;
+  padding-top: 30px;
   display: inline-block;
   color: white;
   text-decoration: none;
 
 }
+nav a:hover {
+  transition:color 0.6s;
+  color: rgb(81,81,81);
+}
 
-button {
+a {
+  text-decoration: none;
+}
+
+button , label {
+  font-family: Comfortaa, 'sans-serif';
+  font-size: 20px;
+  line-height: 31px;
+  list-style-type: none;
+  text-align: right;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  border-radius: 30px;
+  background-color: white;
+  border-color: black; /*change to color on decision*/
+  padding: 2px 10px;
+
+}
+
+button , label {
   font-family: Comfortaa, 'sans-serif';
   font-size: 20px;
   line-height: 31px;
@@ -67,6 +97,7 @@ button {
 }
 
 button:hover {
+  transition:background-color 0.6s;
   background-color: lightgrey; /*change to color of border*/
 }
 
@@ -75,7 +106,7 @@ h1, h2, h3, h4, h5, h6 {
   font-family: Comfortaa;
 
 }
-h1 {
+main h1 {
   border-bottom: 2px solid;
 }
 
@@ -98,10 +129,11 @@ fieldset {
 }
 
 main.news-feed img  {
-  max-height: 100px;
-  max-width: 200px;
-
+  max-height: 250px;
+  max-width: 250px;
 }
+
+
 input {
   display: block;
 }
@@ -112,16 +144,61 @@ main, .login-section form, .login-section input {
   position: relative;
   margin: auto;
   margin-bottom: 5px;
+}
+
+.login-section {
+  position: absolute;
+  top: 50%;
+  bottom: 50%;
+  margin-top: -300px;
+  margin-left: 95px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+form img {
+  padding-bottom: 15px;
 
 }
 
-.login-section input{
+.login-section input {
   font-family: Comfortaa, 'sans-serif';
   border: 2px solid rgb(170, 170, 170);
   padding: 7px;
   border-radius: 5px;
   font-size: 15px;
   text-align: center;
+}
+
+
+.uploadfile {
+  width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	position: absolute;
+	z-index: -1;
+}
+
+.uploadfile + label {
+  border: 2px solid black;
+  position: relative;
+  margin: auto;
+  margin-bottom: 5px;
+  margin-top: 10px;
+  text-align: left;
+
+}
+
+.create textarea {
+  margin-top: 20px;
+  size: 70px;
+  width: 450px;
+  height: 80px;
+  border-radius: 5px;
+  padding: 2px 10px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .login-section input:focus {
@@ -131,9 +208,10 @@ main, .login-section form, .login-section input {
 
 .login-section .login-button:focus {
   outline: none;
+}
 
 /* Homepage */
-
-img#header{
-  width: 100%
+main.news-feed {
+  position: absolute;
+  top: 100px;
 }

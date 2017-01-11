@@ -4,25 +4,16 @@
 
 <main>
   <h1>
-  My Tickit List
+  My Tick It List
 </h1>
-  <br>
+  {% for item in bucket%}
   <form action="/list/{{ list_id }}" method="post">
-  <img src="https://openclipart.org/image/800px/svg_to_png/194077/Placeholder.png" alt="item" width=80 height=80>
+  <img src="{{items[item].image}}" alt="item" width=80 height=80>
   <p>
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    {{items[item].text}}
   </p>
-  <img src="https://openclipart.org/image/800px/svg_to_png/194077/Placeholder.png" alt="item" width=80 height=80>
-  <p>
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-  </p>
-  <img src="https://openclipart.org/image/800px/svg_to_png/194077/Placeholder.png" alt="item" width=80 height=80>
-  <p>
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-  </p>
-  <p>
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-  </p>
+  {% end for%}
+  
   <button class="save-button" type="submit">
   Save
   </button>

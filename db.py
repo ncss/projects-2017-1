@@ -58,12 +58,15 @@ class List:
         search_keys = []
         search_values = []
 
-        search_options = ['id', 'userid', 'title', 'created']
+        search_options = ['title', 'userid', 'id', 'created']
 
         for key, value in kwargs.items():
             if value is not None and key in search_options:
-                search_keys.append(key + ' = ?')
+                search_keys.append(key + '=?')
                 search_values.append(value)
+
+        if search_keys == [] or search_values == []:
+            return "Invalid search"
 
         cur.execute('''
             SELECT title, userid, id, created
@@ -111,7 +114,7 @@ class List:
     def get_items(self):
         cur.execute('''SELECT listid, completed, text, image, id
                        FROM items
-                       WHERE listid=?;''' (self.id,))
+                       WHERE listid=?;''', (self.id,))
         items = []
         for row in cur:
             listid, completed, text, image, id = row
@@ -198,6 +201,8 @@ class Item:
                 search_keys.append(key + ' = ?')
                 search_values.append(value)
 
+        if search_keys == [] or search_values == []:
+            return "Invalid search"
 
         cur.execute('''
             SELECT listid, completed, text, image, id
@@ -244,7 +249,7 @@ class User:
         Adds a user to the database,
         returns None if user already exists.
         '''
-        cur.execute("SELECT * FROM users WHERE username = ?;", (self.name,))
+        cur.execute("SELECT * FROM users WHERE username = ?", (self.name,))
         for row in cur:
             raise UserExistsError("User {} already Exists!!!".format(self.name))
         cur.execute('INSERT INTO users (username, password) VALUES (?, ?);', (self.name, self.password))
@@ -265,22 +270,27 @@ class User:
     @staticmethod
     def search(**kwargs):
 
+        '''
+        Runs search and returns "Invalid search" if username not found
+        '''
+
         search_keys = []
         search_values = []
 
-        search_options = ['name', 'password', 'id']
-
+        search_options = ['username', 'password', 'id']
         for key, value in kwargs.items():
             if value is not None and key in search_options:
-                search_keys.append(key + ' = ?')
+                search_keys.append(key + '=?')
                 search_values.append(value)
 
+        if search_keys == [] or search_values == []:
+            return "Invalid search"
+
         cur.execute('''
-            SELECT from name, password, id
+            SELECT username, password, id
             FROM users
             WHERE {}
-            '''.format(' AND '.join(search_keys)), tuple(search_values)
-        )
+            '''.format(' AND '.join(search_keys)), tuple(search_values))
 
         rows = cur.fetchall()
 
@@ -370,7 +380,7 @@ class User:
 
 
 if __name__ == "__main__":
-    u2 = User('test1', 'testp')
+    '''u2 = User('test1', 'testp')
     u2.add()
     u2.password = "windowsisBad123"
     u2.update()
@@ -395,19 +405,15 @@ if __name__ == "__main__":
     item.delete()
     i.delete()
     l.delete()
-    u2.delete()
-
+    u2.delete()'''
 
     # Testing search methods
-    u = User('test', 'test')
-    u.add()
-    l = List('test', )
+    #u = User('test', 'test')
+    #u.add()
+    l = List('test', 'test')
     l.add()
-    i = Item(l.id, text='test')
-    i.add()
-    print(u)
-    print(l)
-    print(i)
-    print(User.search(name='test', passwd='test'))
+    #i = Item(l.id, text='test')
+    #i.add()
+    print(User.search(username='test', password='test'))
     print(List.search(title='test', userid='test'))
-    print(Item.search(list_id=4, text='test'))
+    print(Item.search(listid=4, text='test'))
