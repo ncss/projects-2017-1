@@ -12,7 +12,7 @@
   <img src="{{items[item].image}}" alt="item" width=80 height=80>
   <p>{{items[item].text}}</p>
   {% if user == logged_in_username%}
-  <input type="checkbox" name="check{{bucket.index(item)}}">
+  <input type="checkbox" name="check{{item}}" {% if items[item].completed%}checked{%end if%}>
   {% end if %}
   {% end for%}
 

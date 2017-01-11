@@ -5,10 +5,10 @@
 <main class="news-feed">
   {% for user in names %}
     <figure>
-      <a href="/list/{{ user_list }}">
+      <a href="/list/{{ user.get_lists()[0].id }}">
         <img src="https://openclipart.org/image/2400px/svg_to_png/194077/Placeholder.png"/>
       </a>
-      <figcaption>{{ user }}</figcaption>
+      <figcaption>{{ user.name }}</figcaption>
     </figure>
   {% end for %}
   <a href="/list/create">
