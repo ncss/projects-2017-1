@@ -1,4 +1,5 @@
 import re
+import html
 
 #possible tokens
 #TODO: fix limitation re:matching {}
@@ -144,7 +145,11 @@ class ExpressionNode(Node): #after {{ --> treat as Python expression
         self.expression = expression
 
     def render(self, context):
-        return str(eval (self.expression, {}, context))
+        safe = re.match(r'^\s*safe\s+(.*)$', self.expression)
+        if safe:
+            return str(eval(safe.group(1), {}, context))
+        else:
+            return html.escape(str(eval(self.expression, {}, context)))
 
 class ForNode(Node):
     def __init__(self, variable, expression, group_node):
@@ -174,9 +179,9 @@ class IfNode(Node):
         return ""
 
 if __name__ == '__main__':
-    TEMPLATES_PATH = 'template_language\\test_templates'
+    TEMPLATES_PATH = 'test_templates'
     print("====")
-    print(render_template('test.txt', {'d': 'username'}))
+    print(render_template('test.txt', {'d': '<<<<username'}))
     print("====")
     print(render_template('test2.txt', {'d': 'username'}))
     print("====")
@@ -185,4 +190,6 @@ if __name__ == '__main__':
     print(render_template('simplefortest.txt', {'b': ['abc', 'def']}))
     print("====")
     print(render_template('complextest.txt', {'b': ['abc', 'def']}))
+    print("====")
+    print(render_template('safetest.txt', {'d': 'username'}))
     print("====")
