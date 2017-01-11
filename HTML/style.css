@@ -79,7 +79,7 @@ h1 {
 }
 
 p {
-  font: 15px/24px Comfortaa;
+  font: 18px/30px Comfortaa;
 
 }
 figcaption {
@@ -103,4 +103,8 @@ main.news-feed img  {
 }
 input {
   display: block;
+}
+
+img#header{
+  width: 100%
 }
