@@ -99,8 +99,9 @@ def list_display_handler(request, list_id):
                 items[item] = Item.get(item)
             request.write(render_template('my_bucket_list.html', {'user_id':str(request.get_secure_cookie('user_id'))[2:-1],  'logged_in_username' : user2.name, 'bucket' : bucket, 'items':items, 'user' : user.name, 'is_user' : is_authorised(request), 'list_title' : ls.title, 'user_name' : user.name, 'list_id' : ls.id, 'title' : "{}\'s Bucket List\'".format(user.name), 'user_list': user_list.id}))
         else:
-            pass
-            # TODO pass list doesnt exist
+            error404_handler(request)
+            return
+
     elif method == 'POST':
         # TODO submit checkboxes to database
         ls = List.get(int(list_id))
