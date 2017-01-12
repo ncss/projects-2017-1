@@ -157,7 +157,7 @@ def error404_handler(request):
 # GET /list/<listID> - Shows list referring to listID or says list not found.
 # GET / - If not logged in, Shows decription and if you are, shows feed.
 
-server = Server()
+server = Server(hostname = '0.0.0.0')
 server.register(r'/', index_handler)
 server.register(r'/login', login_handler)
 server.register(r'/list/create', list_creation_handler)
