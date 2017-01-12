@@ -12,7 +12,7 @@
     {% end if %}
     <label for="check{{ item }}" class="item">
       <figure>
-        <img src="{{ items[item].image }}" alt="item">
+        <{%if not items[item].image.endswith('.mp4')%}img{% end if %}{%if items[item].image.endswith('.mp4')%}video{%end if%} src="{{ items[item].image }}" alt="item" {% if items[item].image.endswith('.mp4')%}controls{%end if %}>
         {% if items[item].text != "" %}
           <figcaption>{{ items[item].text }}</figcaption>
         {% end if %}
