@@ -1,5 +1,6 @@
 import sqlite3
 import datetime
+import hashlib
 
 class UserExistsError(Exception):
     pass
@@ -237,8 +238,14 @@ class Item:
 
 
 class User:
-    def __init__(self, name, passwd, id=None):
-        self.name, self.password = (name, passwd)
+    def __init__(self, name, passwd, id=None, shouldHash=True):
+        if shouldHash:
+            m = hashlib.sha256()
+            m.update(passwd.encode())
+            self.password = m.hexdigest()
+        else:
+            self.password = passwd
+        self.name = name
         self.id = id
 
     def __str__(self):
@@ -322,7 +329,7 @@ class User:
         row = cur.fetchone()
         if row is not None:
             name, password, id = row
-            return User(name, password, id)
+            return User(name, password, id, shouldHash=False)
         return None
 
     @staticmethod
@@ -337,7 +344,7 @@ class User:
         row = cur.fetchone()
         if row is not None:
             name, password, id = row
-            return User(name, password, id)
+            return User(name, password, id, shouldHash=False)
         return None
 
     def get_lists(self):
