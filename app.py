@@ -79,8 +79,8 @@ def list_creation_handler(request):
                 item.image = '/'+filename
                 with open(filename, 'wb') as f:
                     f.write(body)
-                item.update()
-                request.redirect(r'/list/{}'.format(item.list_id))
+            item.update()
+            request.redirect(r'/list/{}'.format(item.list_id))
         else:
             pass
             #TODO handle invalid item input here
@@ -99,16 +99,28 @@ def list_display_handler(request, list_id):
             user_list = user.get_lists()[0]
             user2 = User.get_by_id(int(request.get_secure_cookie('user_id')))
             bucket = [a.id for a in ls.get_items()]
+            comments = Comment.get_comments_for_list(int(list_id))
             items = {}
             for item in bucket:
                 items[item] = Item.get(item)
-            request.write(render_template('my_bucket_list.html', {'user_id':str(request.get_secure_cookie('user_id'))[2:-1],  'logged_in_username' : user2.name, 'bucket' : bucket, 'items':items, 'user' : user.name, 'is_user' : is_authorised(request), 'list_title' : ls.title, 'user_name' : user.name, 'list_id' : ls.id, 'title' : "{}\'s Bucket List\'".format(user.name), 'user_list': user_list.id}))
+            request.write(render_template('my_bucket_list.html',
+                                          {'comments': comments, 'user_id':str(request.get_secure_cookie('user_id'))[2:-1],
+                                           'logged_in_username' : user2.name, 'bucket' : bucket,
+                                           'items':items, 'user' : user.name, 'is_user' : is_authorised(request),
+                                           'list_title' : ls.title, 'user_name' : user.name, 'list_id' : ls.id,
+                                           'title' : "{}\'s Bucket List\'".format(user.name), 'user_list': user_list.id}))
         else:
             error404_handler(request)
             return
 
     elif method == 'POST':
         # TODO submit checkboxes to database
+        text = request.get_field('comment')
+        if text:
+            user = int(request.get_secure_cookie('user_id'))
+            c = Comment(user, text, list_id)
+            c.add()
+        
         ls = List.get(int(list_id))
         for i in [a.id for a in ls.get_items()]:
             checked = request.get_field("check{}".format(i))

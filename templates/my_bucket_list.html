@@ -19,6 +19,25 @@
       </figure>
     </label>
   {% end for %}
+  
+  <!--comment section here-->
+  <div style="width:40%;">
+  <h2>Comments</h2>
+  <form action="/list/{{ list_id }}" method="post">
+  <textarea name="comment" placeholder="Comment.">
+  </textarea>
+  <button type="submit">
+  Post
+  </button>
+  </form>
+  </div>
+  {% for comment in comments%}
+  <div style="width:40%;padding:auto;">
+  <h4>Author: {{ comment.get_name() }}</h4>
+  <p>Date Posted: {{ comment.fix_date(comment.date[0:16]) }}</p>
+  <p>{{ comment.text }}</p>
+  </div>
+  {% end for %}
 
   {% if user == logged_in_username %}
   <a href="/list/create" class="upload-button">+</a>

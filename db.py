@@ -148,9 +148,9 @@ class List:
         return i
 
 class Item:
-    def __init__(self, list_id, completed=False, text=None, image=None, id=None):
+    def __init__(self, list_id, completed=False, text=None, image="", id=None):
         self.completed = completed
-        if text is None and image is None:
+        if text is None and image == "":
             raise ValueError('Either text or image must be declared!!!')
         self.text = text
         self.image = image
@@ -308,9 +308,6 @@ class User:
         Deletes a user,
         !!!Check for authentication first!!!
         '''
-        for i in List.get_user_lists(self):
-            i.delete()
-
         cur.execute('''
                     DELETE FROM users
                     WHERE username = ?;
@@ -384,6 +381,85 @@ class User:
         l.add()
         return l
 
+class Comment:
+    def __init__(self, author, text, list_id, date=None, id=None):
+        self.author = author
+        self.list_id = list_id
+        self.date = date
+        self.id = id
+        self.text = text
+
+    def add(self):
+        '''
+        Add the comment to the database.
+        '''
+        self.date = datetime.datetime.now()
+        cur.execute('''INSERT INTO comments (author, comment, created, listid) VALUES (?,?,?, ?)''', (self.author, self.text, self.date, self.list_id))
+        conn.commit()
+        self.id = cur.lastrowid
+
+    def get_name(self):
+        return User.get_by_id(self.author).name
+
+    def fix_date(self, date):
+        if date is not None:
+            print(date)
+            d = date.split()
+            d2 = d[0].split('-')
+            d2.reverse()
+            d2 = '-'.join(d2)
+            d1 = d[1].split(":")
+            d3 = int(d1[0])
+            t = 'PM' if d3 > 12 else 'AM'
+            d3 -= 12 if d3 > 12 else 0
+            return d2 + " " + str(d3)+":"+d1[1]+" "+t
+
+    def update(self):
+        '''
+        Update any changes to the comment.
+        '''
+        cur.execute('''
+                    UPDATE comments
+                    SET text = ?, created = ?
+                    WHERE id = ?
+                    ''', (self.text, self.date, self.id))
+        conn.commit()
+
+    def delete(self):
+        '''
+        Delete a comment by its id
+        '''
+        
+        cur.execute('''DELETE FROM comments
+                    WHERE id = ?''',
+                    (self.id,))
+        conn.commit()
+
+    @staticmethod
+    def get(id):
+        '''
+        Get a comment by id.
+        '''
+        
+        cur.execute('SELECT * FROM comments WHERE id = ?', (id,))
+        row = cur.fetchone()
+        if row is not None:
+            return Comment(c[2], c[3], c[1], c[4], id)
+        return None
+        
+
+    @staticmethod
+    def get_comments_for_list(list_id):
+        '''
+        Get a list of comment objects by list_id.
+        '''
+        cur.execute('SELECT * FROM comments WHERE listid = ? ORDER BY created DESC', (list_id,))
+        cs = [a for a in cur]
+        comments = []
+        for c in cs:
+            comment = Comment(c[2], c[3], list_id, c[4], c[0])
+            comments.append(comment)
+        return comments
 
 
 if __name__ == "__main__":
