@@ -120,7 +120,7 @@ def list_display_handler(request, list_id):
             user = int(request.get_secure_cookie('user_id'))
             c = Comment(user, text, list_id)
             c.add()
-        
+
         ls = List.get(int(list_id))
         for i in [a.id for a in ls.get_items()]:
             checked = request.get_field("check{}".format(i))

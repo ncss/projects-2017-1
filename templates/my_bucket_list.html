@@ -19,9 +19,9 @@
       </figure>
     </label>
   {% end for %}
-  
+
   <!--comment section here-->
-  <div style="width:40%;">
+  <div style="width:40%; margin-left: auto; margin-right: auto;">
   <h2>Comments</h2>
   <form action="/list/{{ list_id }}" method="post">
   <textarea name="comment" placeholder="Comment.">
@@ -32,7 +32,7 @@
   </form>
   </div>
   {% for comment in comments%}
-  <div style="width:40%;padding:auto;">
+  <div style="width:40%;padding:auto; margin-left: auto; margin-right: auto;">
   <h4>Author: {{ comment.get_name() }}</h4>
   <p>Date Posted: {{ comment.fix_date(comment.date[0:16]) }}</p>
   <p>{{ comment.text }}</p>
