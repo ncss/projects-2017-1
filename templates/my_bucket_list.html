@@ -11,9 +11,11 @@
       {% if items[item].completed %}checked{% end if %}>
     {% end if %}
     <label for="check{{ item }}" class="item">
-      <figure>
+      <figure{% if items[item].image == "" %} style="padding: 10px;border:1px solid black;"{% end if %}>
+		{% if items[item].image != ''%}
         <{%if not items[item].image.endswith('.mp4')%}img{% end if %}{%if items[item].image.endswith('.mp4')%}video{%end if%} src="{{ items[item].image }}" alt="item" {% if items[item].image.endswith('.mp4')%}controls{%end if %}>
-        {% if items[item].text != "" %}
+        {% end if %}
+		{% if items[item].text != "" %}
           <figcaption>{{ items[item].text }}</figcaption>
         {% end if %}
       </figure>
