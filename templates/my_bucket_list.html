@@ -45,6 +45,7 @@
 
   {% if user == logged_in_username %}
   <a href="/list/create" class="upload-button">+</a>
+  <a href="/list/{{list_id}}/edit" class="edit-button">Edit</a>
   <button class="save-button" type="submit">
     &#10003;
   </button>

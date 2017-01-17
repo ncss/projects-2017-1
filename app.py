@@ -85,6 +85,48 @@ def list_creation_handler(request):
             pass
             #TODO handle invalid item input here
 
+def list_edit_handler(request, list_id):
+    method = request.request.method
+
+    if not is_authorised(request):
+        request.redirect(r'/')
+        return
+
+    if method == "GET":
+        ls = List.get(int(list_id))
+        if ls:
+            user = User.get_by_id(ls.userid)
+            user_list = user.get_lists()[0]
+            user2 = User.get_by_id(int(request.get_secure_cookie('user_id')))
+            if not user.name == user2.name:
+                request.redirect("/list/{}".format(list_id))
+                return
+            bucket = [a.id for a in ls.get_items()]
+            comments = Comment.get_comments_for_list(int(list_id))
+            items = {}
+            for item in bucket:
+                items[item] = Item.get(item)
+            request.write(
+            render_template('edit_list.html',
+            {'comments' : comments, 'user_id' : str(request.get_secure_cookie('user_id'))[2:-1],
+            'logged_in_username' : user2.name, 'bucket' : bucket, 'items' : items,
+            'user' : user.name, 'is_user' : is_authorised(request), 'list_id' : ls.id,
+            'title' : 'Edit List', 'user_list': user_list.id}))
+
+        else:
+            error404_handler(request)
+            return
+
+    elif method == "POST":
+        ls = List.get(int(list_id))
+        for i in [a.id for a in ls.get_items()]:
+            checked = request.get_field("check{}".format(i))
+            if bool(checked):                
+                item = Item.get(i)
+                item.delete()
+        request.redirect(r'/list/{}'.format(list_id))
+        return
+
 def list_display_handler(request, list_id):
     method = request.request.method
 
@@ -114,7 +156,6 @@ def list_display_handler(request, list_id):
             return
 
     elif method == 'POST':
-        # TODO submit checkboxes to database
         text = request.get_field('comment')
         if text:
             user = int(request.get_secure_cookie('user_id'))
@@ -180,6 +221,7 @@ server.register(r'/', index_handler)
 server.register(r'/login', login_handler)
 server.register(r'/list/create', list_creation_handler)
 server.register(r'/list/(\d+)', list_display_handler)
+server.register(r'/list/(\d+)/edit', list_edit_handler)
 server.register(r'/logout', logout_handler)
 server.register(r'/user/create', signup_handler)
 server.register(r'/.+', error404_handler)

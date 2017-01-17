@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+{% include header.html %}
+<main id="list-main">
+    <h1>
+    Edit {{user}}'s List
+  </h1>
+  <p>This page can be used to remove goals from your Bucket list.</p>
+  <p>Simply check the box next to the goal and save the list using the save button.</p>
+  <p>The chosen goals will then be removed from your bucket list.</p>
+  <form action="/list/{{ list_id }}/edit" method="post">
+  {% for item in bucket %}
+    <label class="item">
+      <figure style="padding: 10px;border:1px solid black;">
+		{% if items[item].image != ''%}
+        <{%if not items[item].image.endswith('.mp4')%}img{% end if %}{%if items[item].image.endswith('.mp4')%}video{%end if%} src="{{ items[item].image }}" alt="item">
+        {% end if %}
+		{% if items[item].text != "" %}
+          <figcaption style="visibility: visible;">{{ items[item].text }}</figcaption>
+        {% end if %}
+		<input type="checkbox" name="check{{ item }}" id="check{{ item }}" style="display:block;">
+      </figure>
+    </label>
+  {% end for %}
+
+  {% if user == logged_in_username %}
+  <button class="save-button" style="right: 50px;" type="submit">
+    &#10003;
+  </button>
+  {% end if %}
+
+    <script src="../js/masonryfooter.js"></script>
+</form>
+</main>
