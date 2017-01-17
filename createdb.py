@@ -11,6 +11,9 @@ cur.execute('''
   	id INTEGER NOT NULL,
   	username TEXT NOT NULL,
   	password TEXT NOT NULL,
+  	image TEXT NOT NULL,
+  	name TEXT,
+  	email TEXT NOT NULL,
   	PRIMARY KEY (id)
 );
 '''

@@ -238,13 +238,18 @@ class Item:
 
 
 class User:
-    def __init__(self, name, passwd, id=None, shouldHash=True):
+    def __init__(self, name, passwd, email="", image='static/img/user_def.png', rname='', id=None, shouldHash=True):
+        if not rname:
+            rname = name
         if shouldHash:
             m = hashlib.sha256()
             m.update(passwd.encode())
             self.password = m.hexdigest()
         else:
             self.password = passwd
+        self.image = image
+        self.email = email
+        self.real_name = rname
         self.name = name
         self.id = id
 
@@ -259,7 +264,7 @@ class User:
         cur.execute("SELECT * FROM users WHERE username = ?", (self.name,))
         for row in cur:
             raise UserExistsError("User {} already Exists!!!".format(self.name))
-        cur.execute('INSERT INTO users (username, password) VALUES (?, ?);', (self.name, self.password))
+        cur.execute('INSERT INTO users (username, password, image, email, name) VALUES (?, ?, ?, ?, ?);', (self.name, self.password, self.image, self.email, self.real_name))
         conn.commit()
         self.id = cur.lastrowid
 
@@ -269,9 +274,9 @@ class User:
         '''
         cur.execute('''
                     UPDATE users
-                    SET password = ?
+                    SET password = ?, image = ?, email = ?, name = ?
                     WHERE id = ?
-                    ''', (self.password, self.id))
+                    ''', (self.password, self.image, self.email, self.real_name, self.id))
         conn.commit()
 
     @staticmethod
@@ -320,13 +325,13 @@ class User:
         Get a User object with the details of the found user,
         returns None if no user found
         '''
-        cur.execute('''SELECT username, password, id
+        cur.execute('''SELECT username, password, id, image, name, email
                         FROM users u
                         WHERE u.username = ?;''', (username,))
         row = cur.fetchone()
         if row is not None:
-            name, password, id = row
-            return User(name, password, id, shouldHash=False)
+            name, password, id, im, rname, email = row
+            return User(name, password, email, im, rname, id, False)
         return None
 
     @staticmethod
@@ -335,13 +340,13 @@ class User:
         Get a User object with the details of the found user,
         returns None if no user found
         '''
-        cur.execute('''SELECT username, password, id
+        cur.execute('''SELECT username, password, id, image, name, email
                         FROM users u
                         WHERE u.id = ?;''', (id,))
         row = cur.fetchone()
         if row is not None:
-            name, password, id = row
-            return User(name, password, id, shouldHash=False)
+            name, password, id, im, rname, email = row
+            return User(name, password, email, im, rname, id, False)
         return None
 
     def get_lists(self):
