@@ -24,20 +24,22 @@
 
   <!--comment section here-->
   <div style="width:40%; margin-left: auto; margin-right: auto;">
-  <h2>Comments</h2>
+  <h1>Comments</h1>
   <form action="/list/{{ list_id }}" method="post">
+  <h3>Post Comment</h3>
   <textarea name="comment" placeholder="Comment.">
   </textarea>
-  <button type="submit">
+  <button type="submit" style="margin-right:10px; margin-left:75%;">
   Post
   </button>
   </form>
   </div>
+  <br>
   {% for comment in comments%}
-  <div style="width:40%;padding:auto; margin-left: auto; margin-right: auto;">
-  <h4>Author: {{ comment.get_name() }}</h4>
-  <p>Date Posted: {{ comment.fix_date(comment.date[0:16]) }}</p>
-  <p>{{ comment.text }}</p>
+  <div style="width:40%;padding:auto; margin-left: auto; margin-right: auto;padding-bottom:2%;">
+  <h4 style="margin-left:0px;text-align:left;">Author: {{ comment.get_name() }}</h4>
+  <p style="margin-left:0px;text-align:left;">Date Posted: {{ comment.fix_date(comment.date[0:16]) }}</p>
+  <p style="padding:2px;border:1px solid lightgray;">{{ comment.text }}</p>
   </div>
   {% end for %}
 
