@@ -238,7 +238,7 @@ class Item:
 
 
 class User:
-    def __init__(self, name, passwd, email="", image='static/img/user_def.png', rname='', id=None, shouldHash=True):
+    def __init__(self, name, passwd, email="", image='/static/img/user_def.png', rname='', id=None, shouldHash=True):
         if not rname:
             rname = name
         if shouldHash:

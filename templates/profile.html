@@ -3,16 +3,17 @@
 {% include header.html %}
 
   <main class="login-section">
-    <form action="/user/edit" method="post"  enctype="multipart/form-data">
-          <img src="/static/img/tickit_logo_only.png" alt="Tick It LOGO" width=160 height=160>
+    <form action="/user/edit" method="post"  enctype="multipart/form-data" style="position:absolute;top:30%;width:95%;">
+          <img src="{{user_obj.image}}" alt="Profile Image" height=160>
+		  <h1 style="width:50%;margin-left:25%;">Edit Profile</h1>
           {% if disp %}
           <p style="color:red" id="warn">Fields Not Completed!</p>
           {% end if %}
           <input type="text" name="rname" placeholder="Full Name" size="40" {%if user_obj.real_name%}value="{{user_obj.real_name}}"{%end if%}>
 		  <input type="text" name="email" placeholder="Email Address" size="40" {%if user_obj.email%}value="{{user_obj.email}}"{%end if%}>
 		  <input type="file" name="profile-img">
-          <button class="login-button">
-            UPDATE PROFILE
+          <button class="login-button" style="margin-left:50%;">
+            UPDATE
           </button>
     </form>
   </main>

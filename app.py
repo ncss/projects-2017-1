@@ -16,14 +16,14 @@ def is_authorised(request):
 def index_handler(request):
     cookie = request.get_secure_cookie('user_id')
     if cookie == None:
-        request.write(render_template('homepage.html', {'is_user' : is_authorised(request), 'title' : "Home Page"}))
+        request.write(render_template('homepage.html', {'nfeed':False, 'is_user' : is_authorised(request), 'title' : "Home Page"}))
     else:
         user = User.get_by_id(int(cookie))
         ls = List.get_user_lists(user)
         names = user.get_newsfeed()
         names = [user.get_by_id(a.userid) for a in names]
         user_list = user.get_lists()[0]
-        request.write(render_template('news-feed.html', {'user_id':str(request.get_secure_cookie('user_id'))[2:-1], 'user_id': user.id, 'names':names, 'is_user' : is_authorised(request), 'title' : 'News Feed', 'user' : user.name, 'user_list': user_list.id}))
+        request.write(render_template('news-feed.html', {'nfeed':True, 'user_id':str(request.get_secure_cookie('user_id'))[2:-1], 'user_id': user.id, 'names':names, 'is_user' : is_authorised(request), 'title' : 'News Feed', 'user' : user.name, 'user_list': user_list.id}))
 
 
 def login_handler(request):
@@ -33,7 +33,7 @@ def login_handler(request):
         return
 
     if method == 'GET':
-        request.write(render_template('login.html', {'disp' : False, 'is_user' : is_authorised(request), 'location' : '/login', 'title' : "Login" }))
+        request.write(render_template('login.html', {'nfeed':False, 'disp' : False, 'is_user' : is_authorised(request), 'location' : '/login', 'title' : "Login" }))
 
     elif method == 'POST':
         username = request.get_field('username')
@@ -59,7 +59,7 @@ def list_creation_handler(request):
 
     if method == 'GET':
         user_list = user.get_lists()[0]
-        request.write(render_template('create.html', {'user_id':str(request.get_secure_cookie('user_id'))[2:-1],  'user' : user.name, 'is_user' : is_authorised(request), 'title' : 'Create A List', 'user_list': user_list.id}))
+        request.write(render_template('create.html', {'nfeed':False, 'user_id':str(request.get_secure_cookie('user_id'))[2:-1],  'user' : user.name, 'is_user' : is_authorised(request), 'title' : 'Create A List', 'user_list': user_list.id}))
     elif method == 'POST':
         textdesc = request.get_field('description')
         ##Get the User
@@ -106,7 +106,7 @@ def list_edit_handler(request, list_id):
                 items[item] = Item.get(item)
             request.write(
             render_template('edit_list.html',
-            {'comments' : comments, 'user_id' : str(request.get_secure_cookie('user_id'))[2:-1],
+            {'nfeed':False, 'comments' : comments, 'user_id' : str(request.get_secure_cookie('user_id'))[2:-1],
             'logged_in_username' : user2.name, 'bucket' : bucket, 'items' : items,
             'user' : user.name, 'is_user' : is_authorised(request), 'list_id' : ls.id,
             'title' : 'Edit List', 'user_list': user_list.id}))
@@ -144,7 +144,7 @@ def list_display_handler(request, list_id):
             for item in bucket:
                 items[item] = Item.get(item)
             request.write(render_template('my_bucket_list.html',
-                                          {'comments': comments, 'user_id':str(request.get_secure_cookie('user_id'))[2:-1],
+                                          {'nfeed':False, 'comments': comments, 'user_id':str(request.get_secure_cookie('user_id'))[2:-1],
                                            'logged_in_username' : user2.name, 'bucket' : bucket,
                                            'items':items, 'user' : user.name, 'is_user' : is_authorised(request),
                                            'list_title' : ls.title, 'user_name' : user.name, 'list_id' : ls.id,
@@ -179,12 +179,12 @@ def profile_edit_handler(request):
     user = User.get_by_id(int(request.get_secure_cookie('user_id')))
 
     if method == "GET":
-        request.write(render_template('profile.html', {'user_obj' : user, 'disp' : False, 'is_user' : is_authorised(request), 'user_id' : user.id, 'user' : user.name, 'title' : "Edit Profile" }))
+        request.write(render_template('profile.html', {'nfeed':False, 'user_obj' : user, 'disp' : False, 'is_user' : is_authorised(request), 'user_id' : user.id, 'user' : user.name, 'title' : "Edit Profile" }))
 
     if method == "POST":
         email = request.get_field('email')
         if not email:
-            request.write(render_template('profile.html', {'user_obj' : user, 'disp' : True, 'is_user' : is_authorised(request), 'user_id' : user.id, 'user' : user.name, 'title' : "Edit Profile" }))
+            request.write(render_template('profile.html', {'nfeed':False, 'user_obj' : user, 'disp' : True, 'is_user' : is_authorised(request), 'user_id' : user.id, 'user' : user.name, 'title' : "Edit Profile" }))
             return
         rname = request.get_field('rname')
         fname, contype, body = request.get_file('profile-img')
@@ -207,7 +207,7 @@ def signup_handler(request):
         return
 
     if method == 'GET':
-        request.write(render_template('signup.html', {'disp':False, 'is_user' : is_authorised(request), 'location' : '/user/create', 'title' : "Sign Up" }))
+        request.write(render_template('signup.html', {'nfeed':True, 'disp':False, 'is_user' : is_authorised(request), 'location' : '/user/create', 'title' : "Sign Up" }))
     elif method == 'POST':
         print("running post")
         username = request.get_field('username')
@@ -231,7 +231,7 @@ def signup_handler(request):
             request.set_secure_cookie('user_id', str(user.id))
             request.redirect(r'/user/edit')
         else:
-            request.write(render_template('signup.html', {'user_issue': user is not None, 'disp':True, 'is_user' : is_authorised(request), 'location' : '/user/create', 'title' : "Sign Up" }))
+            request.write(render_template('signup.html', {'nfeed':False, 'user_issue': user is not None, 'disp':True, 'is_user' : is_authorised(request), 'location' : '/user/create', 'title' : "Sign Up" }))
 
 def logout_handler(request):
     if not is_authorised(request):
@@ -242,7 +242,7 @@ def logout_handler(request):
     request.redirect(r'/')
 
 def error404_handler(request):
-    request.write(render_template('error404.html', { 'title' : "Error 404" }))
+    request.write(render_template('error404.html', {'title' : "Error 404" }))
 
 # GET /list/create - Call create screen
 # POST /list/create - Post list to server and redirects to created list.
