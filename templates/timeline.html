@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+
+{% include header.html %}
+
+  <main class="login-section">
+	{%for list in lists%}
+	<a href="/list/{{list.id}}" style="width:40%;margin-left:30%;color:black;">
+    <div style="width:100%;">
+	<h2 style="margin-left:-30%;margin-right:auto;">{{user}}'s Bucket List #{{lists.index(list)+1}}</h2>
+	<h4 style="margin-left:-35%;margin-right:auto;">Date Created: {{list.created[0:10]}}</h4>
+	<p></p>
+	<img src="{{objs[lists.index(list)].image}}" width="80%">
+	<h3>{{objs[lists.index(list)].text}}</h3>
+	</div>
+	</a>
+	{%end for%}
+  </main>

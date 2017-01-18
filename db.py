@@ -356,7 +356,8 @@ class User:
         cur.execute('''
                     SELECT title, userid, id, created
                     FROM lists
-                    WHERE userid = ?;
+                    WHERE userid = ?
+                    ORDER BY created DESC;
                     ''', (self.id,))
         lists = []
         for row in cur:
