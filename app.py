@@ -155,10 +155,14 @@ def list_display_handler(request, list_id):
 
     elif method == 'POST':
         text = request.get_field('comment')
-        if text:
-            user = int(request.get_secure_cookie('user_id'))
-            c = Comment(user, text, list_id)
-            c.add()
+        save = request.get_field('save') == ''
+        if not save:
+            if text:
+                user = int(request.get_secure_cookie('user_id'))
+                c = Comment(user, text, list_id)
+                c.add()
+            request.redirect(r'/list/{}'.format(list_id))
+            return
 
         ls = List.get(int(list_id))
         for i in [a.id for a in ls.get_items()]:
@@ -166,7 +170,7 @@ def list_display_handler(request, list_id):
             item = Item.get(i)
             item.completed = bool(checked)
             item.update()
-        request.redirect(r'/list/{}'.format(list_id))
+        request.redirect(r'/')
         return
 
 def profile_edit_handler(request):
@@ -197,7 +201,22 @@ def profile_edit_handler(request):
                 f.write(body)
         user.update()
         request.redirect(r'/')
-        
+
+def timeline_handler(request):
+    if not is_authorised(request):
+        request.redirect(r'/')
+        return
+
+    id = request.get_secure_cookie('user_id')
+    user = User.get_by_id(int(id))    
+    lists = [a for a in user.get_lists() if a.get_items() != []]
+    items = [a.get_items()[0] for a in lists]
+
+    request.write(render_template('timeline.html',
+                                  {'title':'Timeline', 'lists':lists,
+                                   'objs':items, 'nfeed':True,
+                                   'user':user.name, 'user_id':str(id)[2:-1],
+                                   'is_user':is_authorised(request)}))
 
 def signup_handler(request):
     method = request.request.method
@@ -258,6 +277,7 @@ server.register(r'/list/(\d+)/edit', list_edit_handler)
 server.register(r'/logout', logout_handler)
 server.register(r'/user/create', signup_handler)
 server.register(r'/user/edit', profile_edit_handler)
+server.register(r'/timeline', timeline_handler)
 server.register(r'/.+', error404_handler)
 
 server.run()

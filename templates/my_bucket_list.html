@@ -25,14 +25,12 @@
   <!--comment section here-->
   <div style="width:40%; margin-left: auto; margin-right: auto;">
   <h1>Comments</h1>
-  <form action="/list/{{ list_id }}" method="post">
   <h3>Post Comment</h3>
   <textarea name="comment" placeholder="Comment.">
   </textarea>
   <button type="submit" style="margin-right:10px; margin-left:75%;">
   Post
   </button>
-  </form>
   </div>
   <br>
   {% for comment in comments%}
@@ -46,7 +44,7 @@
   {% if user == logged_in_username %}
   <a href="/list/create" class="upload-button">+</a>
   <a href="/list/{{list_id}}/edit" class="edit-button">Edit</a>
-  <button class="save-button" type="submit">
+  <button name="save" class="save-button" type="submit">
     &#10003;
   </button>
   {% end if %}
