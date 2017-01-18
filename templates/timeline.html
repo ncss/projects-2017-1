@@ -3,15 +3,27 @@
 {% include header.html %}
 
   <main class="login-section">
+	<aside style="width:25%;border:1px solid black;position:fixed;left:5%;top:20%;">
+	<h2>Profile: {{user}}</h2>
+	<img src="{{user_obj.image}}" style="width:90%;border:2px solid gray;margin:5px;">
+	<p>Full Name: {{user_obj.real_name}}</p>
+	<p>Email: {{user_obj.email}}</p>
+	</aside>
+	<article style="width:50%;margin-left:30%;margin-top:175%;">
+	<h1 style="width:90%;margin-left:5%;">Timeline</h1>
 	{%for list in lists%}
-	<a href="/list/{{list.id}}" style="width:40%;margin-left:30%;color:black;">
-    <div style="width:100%;">
+	<a href="/list/{{list.id}}" style="color:black;">
+    <div class = "timeline_div">
 	<h2 style="margin-left:-30%;margin-right:auto;">{{user}}'s Bucket List #{{lists.index(list)+1}}</h2>
 	<h4 style="margin-left:-35%;margin-right:auto;">Date Created: {{list.created[0:10]}}</h4>
 	<p></p>
-	<img src="{{objs[lists.index(list)].image}}" width="80%">
-	<h3>{{objs[lists.index(list)].text}}</h3>
+	<img src="{{objs[lists.index(list)].image}}" width="80%" style="border:2px solid lightgray;">
+	<h3 class="timeline_h3">Goals:</h3>
+	<h3 class="timeline_h3"> - {{objs[lists.index(list)].text}}</h3>
+	<h3 class="timeline_h3"> Click to view.</h3>
 	</div>
 	</a>
+	<br>
 	{%end for%}
+	</article>
   </main>
