@@ -318,8 +318,8 @@ a.floating {
 
 main.create {
   position: absolute;
-  top: 150px;
-  left: 136px;
+  top: 450px;
+  left: -20px;
 }
 
 .news-feed figure {
