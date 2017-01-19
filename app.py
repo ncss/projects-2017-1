@@ -214,7 +214,7 @@ def timeline_handler(request):
 
     request.write(render_template('timeline.html',
                                   {'title':'Timeline', 'lists':lists,
-                                   'objs':items, 'nfeed':True, 'user_obj':user,
+                                   'objs':items, 'nfeed':False, 'user_obj':user,
                                    'user':user.name, 'user_id':str(id)[2:-1],
                                    'is_user':is_authorised(request)}))
 
