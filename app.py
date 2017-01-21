@@ -200,7 +200,7 @@ def profile_edit_handler(request):
             with open(user.image[1:], 'wb') as f:
                 f.write(body)
         user.update()
-        request.redirect(r'/')
+        request.redirect(r'/timeline')
 
 def timeline_handler(request):
     if not is_authorised(request):

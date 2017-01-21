@@ -3,12 +3,13 @@
 {% include header.html %}
 
   <main class="login-section">
+	<a href="/user/edit" style="color:black">
 	<aside style="width:25%;border:1px solid black;position:fixed;left:5%;top:20%;">
 	<h2>Profile: {{user}}</h2>
 	<img src="{{user_obj.image}}" style="width:90%;border:2px solid gray;margin:5px;">
 	<p>Full Name: {{user_obj.real_name}}</p>
 	<p>Email: {{user_obj.email}}</p>
-	</aside>
+	</aside></a>
 	<article style="position:absolute;top:50px;width:50%;margin-left:30%;">
 	<h1 style="width:90%;margin-left:5%;">Timeline</h1>
 	{%for list in lists%}
