@@ -47,7 +47,7 @@ def login_handler(request):
             request.set_secure_cookie('user_id', str(user.id))
             request.redirect(r'/login')
         else:
-            request.write(render_template('login.html', {'disp' : True, 'is_user' : is_authorised(request), 'location' : '/login', 'title' : "Login" }))
+            request.write(render_template('login.html', {'nfeed':False, 'disp' : True, 'is_user' : is_authorised(request), 'location' : '/login', 'title' : "Login" }))
 
 def list_creation_handler(request):
     method = request.request.method
