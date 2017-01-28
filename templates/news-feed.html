@@ -1,16 +1,7 @@
 <!DOCTYPE HTML>
 
 {% include header.html %}
-
-  <!--{% for user in names %}
-    <figure>
-      <a href="/list/{{ user_list }}">
-        <img src="https://openclipart.org/image/2400px/svg_to_png/194077/Placeholder.png"/>
-      </a>
-      <figcaption>{{ user }}</figcaption>
-    </figure>
-  {% end for %}-->
-
+	
 <main class="news-feed"></main>
 <script src="/static/js/jquery-3.1.1.min.js"></script>
 <script src="/static/js/jquery.justified.min.js"></script>
@@ -25,7 +16,7 @@
     {
       id: {{u.id}},
       url: '/static/img/news_feed/{{u.id}}.jpeg',
-      title: '{{u.name}}\'s Bucket List'
+      title: '{{u.title}}'
     }{% if names.index(u) != len(names)-1 %},{% end if %}
     {% end for %}
   ]

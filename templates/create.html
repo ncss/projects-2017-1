@@ -4,7 +4,7 @@
 
 <main class="create">
   <h1>New Bucket List Item</h1>
-  <form action="/list/create" method="post" enctype="multipart/form-data">
+  <form action="/list/{{list_id}}/create" method="post" enctype="multipart/form-data">
     <input type="file" name="file_upload" id="file_upload" class="uploadfile" >
     <label for="file_upload"> Choose Photo </label>
     <textarea name="description" placeholder="Description"></textarea>

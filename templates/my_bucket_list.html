@@ -42,7 +42,7 @@
   {% end for %}
 
   {% if user == logged_in_username %}
-  <a href="/list/create" class="upload-button">+</a>
+  <a href="/list/{{list_id}}/create" class="upload-button">+</a>
   <a href="/list/{{list_id}}/edit" class="edit-button">Edit</a>
   <button name="save" class="save-button" type="submit">
     &#10003;

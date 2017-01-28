@@ -15,6 +15,8 @@ cur = conn.cursor()
 
 class List:
     def __init__(self, title, userid, id=None, created=None):
+        if title == "":
+            title = User.get_by_id(userid).name+"'s Bucket List"
         self.title = title
         self.userid = userid
         self.id = id
@@ -467,6 +469,9 @@ class Comment:
             comments.append(comment)
         return comments
 
+class Empty:
+    def __init__(self):
+        self.image = ''
 
 if __name__ == "__main__":
     '''u2 = User('test1', 'testp')
